@@ -1,0 +1,4 @@
+src2srcml --language=Java --directory=java -o /gfs/alapide/IA/dataset-xml/java.java.xml
+src2srcml --language=Java --directory=org/eclipse -o /gfs/alapide/IA/dataset-xml/eclipse.java.xml
+src2srcml --language=Java --directory=org/apache -o /gfs/alapide/IA/dataset-xml/apache.java.xml
+
