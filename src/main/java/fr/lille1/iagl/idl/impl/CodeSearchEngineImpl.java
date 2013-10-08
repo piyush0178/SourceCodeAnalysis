@@ -13,177 +13,82 @@ import fr.lille1.iagl.idl.CodeSearchEngine;
  */
 public class CodeSearchEngineImpl implements CodeSearchEngine {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lille1.iagl.idl.CodeSearchEngine#findType(java.lang.String)
-	 */
-	public Type findType(String className) {
+	public Type findType(final String className) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lille1.iagl.idl.CodeSearchEngine#findSubTypesOf(java.lang.String)
-	 */
-	public List<Type> findSubTypesOf(String className) {
+	public List<Type> findSubTypesOf(final String className) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lille1.iagl.idl.CodeSearchEngine#findFieldsTypedWith(java.lang.String)
-	 */
-	public List<Field> findFieldsTypedWith(String className) {
+	public List<Field> findFieldsTypedWith(final String className) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lille1.iagl.idl.CodeSearchEngine#findAllReadAccessesOf(fr.lille1.iagl
-	 * .idl.CodeSearchEngine.Field)
-	 */
-	public List<Location> findAllReadAccessesOf(Field field) {
+	public List<Location> findAllReadAccessesOf(final Field field) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lille1.iagl.idl.CodeSearchEngine#findAllWriteAccessesOf(fr.lille1.
-	 * iagl.idl.CodeSearchEngine.Field)
-	 */
-	public List<Location> findAllWriteAccessesOf(Field field) {
+	public List<Location> findAllWriteAccessesOf(final Field field) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lille1.iagl.idl.CodeSearchEngine#findMethodsOf(java.lang.String)
-	 */
-	public List<Method> findMethodsOf(String className) {
+	public List<Method> findMethodsOf(final String className) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lille1.iagl.idl.CodeSearchEngine#findMethodsReturning(java.lang.String
-	 * )
-	 */
-	public List<Method> findMethodsReturning(String className) {
+	public List<Method> findMethodsReturning(final String className) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lille1.iagl.idl.CodeSearchEngine#findMethodsTakingAsParameter(java
-	 * .lang.String)
-	 */
-	public List<Method> findMethodsTakingAsParameter(String className) {
+	public List<Method> findMethodsTakingAsParameter(final String className) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lille1.iagl.idl.CodeSearchEngine#findMethodsCalled(java.lang.String)
-	 */
-	public List<Method> findMethodsCalled(String methodName) {
+	public List<Method> findMethodsCalled(final String methodName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lille1.iagl.idl.CodeSearchEngine#findOverridingMethodsOf(fr.lille1
-	 * .iagl.idl.CodeSearchEngine.Method)
-	 */
-	public List<Method> findOverridingMethodsOf(Method method) {
+	public List<Method> findOverridingMethodsOf(final Method method) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lille1.iagl.idl.CodeSearchEngine#findNewOf(java.lang.String)
-	 */
-	public List<Location> findNewOf(String className) {
+	public List<Location> findNewOf(final String className) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lille1.iagl.idl.CodeSearchEngine#findCastsTo(java.lang.String)
-	 */
-	public List<Location> findCastsTo(String className) {
+	public List<Location> findCastsTo(final String className) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lille1.iagl.idl.CodeSearchEngine#findInstanceOf(java.lang.String)
-	 */
-	public List<Location> findInstanceOf(String className) {
+	public List<Location> findInstanceOf(final String className) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lille1.iagl.idl.CodeSearchEngine#findMethodsThrowing(java.lang.String)
-	 */
-	public List<Method> findMethodsThrowing(String exceptionName) {
+	public List<Method> findMethodsThrowing(final String exceptionName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.lille1.iagl.idl.CodeSearchEngine#findCatchOf(java.lang.String)
-	 */
-	public List<Location> findCatchOf(String exceptionName) {
+	public List<Location> findCatchOf(final String exceptionName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.lille1.iagl.idl.CodeSearchEngine#findClassesAnnotatedWith(java.lang
-	 * .String)
-	 */
-	public List<Type> findClassesAnnotatedWith(String annotationName) {
+	public List<Type> findClassesAnnotatedWith(final String annotationName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
