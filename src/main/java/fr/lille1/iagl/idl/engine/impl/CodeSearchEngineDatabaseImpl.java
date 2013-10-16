@@ -131,6 +131,7 @@ public class CodeSearchEngineDatabaseImpl extends AbstractCodeSearchEngine {
 	}
 
 	@Override
+	@Deprecated
 	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Type> findClassesAnnotatedWith(
 			final String annotationName) {
 		throw new WillNeverBeImplementedMethodException(
