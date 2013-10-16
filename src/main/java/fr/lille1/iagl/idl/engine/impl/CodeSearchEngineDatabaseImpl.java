@@ -2,11 +2,12 @@ package fr.lille1.iagl.idl.engine.impl;
 
 import java.util.List;
 
-import javax.xml.namespace.QName;
 import javax.xml.xquery.XQConnection;
 import javax.xml.xquery.XQException;
+import javax.xml.xquery.XQItemType;
 import javax.xml.xquery.XQPreparedExpression;
 import javax.xml.xquery.XQResultSequence;
+import javax.xml.xquery.XQStaticContext;
 
 import fr.lille1.iagl.idl.bean.Field;
 import fr.lille1.iagl.idl.bean.Location;
@@ -25,17 +26,22 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	@Override
 	public Type findType(final String typeName) {
-		XQPreparedExpression xqpe;
+		final XQPreparedExpression prepExpr;
 		try {
-			xqpe = connection
-					.prepareExpression("declare variable $x as xs:string external; for $exp in //class[name=$x] return $exp");
 
-			xqpe.bindString(new QName("x"), typeName, null);
+			final XQStaticContext context = connection.getStaticContext();
+			context.setContextItemStaticType(connection
+					.createDocumentElementType(connection.createElementType(
+							null, XQItemType.XQBASETYPE_UNTYPED)));
 
-			final XQResultSequence rs = xqpe.executeQuery();
+			final XQPreparedExpression xqpe = connection.prepareExpression(
+					"for $exp in //class[name='RandomAccessFile'] return $exp",
+					context);
 
-			while (rs.next()) {
-				System.out.println(rs.getItemAsString(null));
+			final XQResultSequence results = xqpe.executeQuery();
+
+			while (results.next()) {
+				System.out.println(results.getItemAsString(null));
 			}
 
 		} catch (final XQException e) {
