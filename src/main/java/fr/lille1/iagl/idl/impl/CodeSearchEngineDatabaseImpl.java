@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.xml.xquery.XQConnection;
 
+import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
 import fr.lille1.iagl.idl.utils.DatabaseConnection;
 
 public class CodeSearchEngineDatabaseImpl extends AbstractCodeSearchEngine {
@@ -122,8 +123,7 @@ public class CodeSearchEngineDatabaseImpl extends AbstractCodeSearchEngine {
 	@Override
 	public List<fr.lille1.iagl.idl.CodeSearchEngine.Type> findClassesAnnotatedWith(
 			final String annotationName) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new WillNeverBeImplementedMethodException(
+				"Méthode impossible à implémenter en utilisant SrcML");
 	}
-
 }
