@@ -8,9 +8,9 @@ import net.xqj.basex.BaseXXQDataSource;
 
 public class DatabaseConnection {
 
-	private final DatabaseConnection dbConnection = new DatabaseConnection();
+	private final static DatabaseConnection dbConnection = new DatabaseConnection();
 
-	private XQConnection connection;
+	private static XQConnection connection;
 
 	private DatabaseConnection() {
 		final XQDataSource dataSource = new BaseXXQDataSource();
@@ -28,18 +28,9 @@ public class DatabaseConnection {
 	}
 
 	/**
-	 * Getter du singleton
-	 * 
-	 * @return
-	 */
-	public DatabaseConnection getDbConnection() {
-		return dbConnection;
-	}
-
-	/**
 	 * @return the xConnection
 	 */
-	public XQConnection getConnection() {
+	public static XQConnection getConnection() {
 		return connection;
 	}
 
