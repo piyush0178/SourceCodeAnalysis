@@ -7,5 +7,5 @@ import lombok.Data;
  */
 @Data
 public class Field extends Member {
-	// empty class
+	
 }
