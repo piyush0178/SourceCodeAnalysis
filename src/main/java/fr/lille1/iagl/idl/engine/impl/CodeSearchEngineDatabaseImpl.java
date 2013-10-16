@@ -1,4 +1,4 @@
-package fr.lille1.iagl.idl.impl;
+package fr.lille1.iagl.idl.engine.impl;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class CodeSearchEngineDatabaseImpl extends AbstractCodeSearchEngine {
 	}
 
 	@Override
-	public fr.lille1.iagl.idl.CodeSearchEngine.Type findType(
+	public fr.lille1.iagl.idl.engine.CodeSearchEngine.Type findType(
 			final String typeName) {
 		XQExpression expression;
 		try {
@@ -33,105 +33,105 @@ public class CodeSearchEngineDatabaseImpl extends AbstractCodeSearchEngine {
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Type> findSubTypesOf(
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Type> findSubTypesOf(
 			final String typeName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Field> findFieldsTypedWith(
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Field> findFieldsTypedWith(
 			final String typeName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Location> findAllReadAccessesOf(
-			final fr.lille1.iagl.idl.CodeSearchEngine.Field field) {
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Location> findAllReadAccessesOf(
+			final fr.lille1.iagl.idl.engine.CodeSearchEngine.Field field) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Location> findAllWriteAccessesOf(
-			final fr.lille1.iagl.idl.CodeSearchEngine.Field field) {
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Location> findAllWriteAccessesOf(
+			final fr.lille1.iagl.idl.engine.CodeSearchEngine.Field field) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Method> findMethodsOf(
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Method> findMethodsOf(
 			final String typeName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Method> findMethodsReturning(
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Method> findMethodsReturning(
 			final String typeName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Method> findMethodsTakingAsParameter(
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Method> findMethodsTakingAsParameter(
 			final String typeName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Method> findMethodsCalled(
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Method> findMethodsCalled(
 			final String methodName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Method> findOverridingMethodsOf(
-			final fr.lille1.iagl.idl.CodeSearchEngine.Method method) {
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Method> findOverridingMethodsOf(
+			final fr.lille1.iagl.idl.engine.CodeSearchEngine.Method method) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Location> findNewOf(
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Location> findNewOf(
 			final String className) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Location> findCastsTo(
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Location> findCastsTo(
 			final String typeName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Location> findInstanceOf(
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Location> findInstanceOf(
 			final String typeName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Method> findMethodsThrowing(
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Method> findMethodsThrowing(
 			final String exceptionName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Location> findCatchOf(
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Location> findCatchOf(
 			final String exceptionName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<fr.lille1.iagl.idl.CodeSearchEngine.Type> findClassesAnnotatedWith(
+	public List<fr.lille1.iagl.idl.engine.CodeSearchEngine.Type> findClassesAnnotatedWith(
 			final String annotationName) {
 		throw new WillNeverBeImplementedMethodException(
 				"Méthode impossible à implémenter en utilisant SrcML");

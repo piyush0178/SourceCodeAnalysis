@@ -1,4 +1,4 @@
-package fr.lille1.iagl.idl;
+package fr.lille1.iagl.idl.engine;
 
 import java.util.List;
 

@@ -3,8 +3,8 @@
  */
 package fr.lille1.iagl.idl.main;
 
-import fr.lille1.iagl.idl.CodeSearchEngine;
-import fr.lille1.iagl.idl.impl.CodeSearchEngineDatabaseImpl;
+import fr.lille1.iagl.idl.engine.CodeSearchEngine;
+import fr.lille1.iagl.idl.engine.impl.CodeSearchEngineDatabaseImpl;
 import fr.lille1.iagl.idl.utils.DatabaseConnection;
 
 /**

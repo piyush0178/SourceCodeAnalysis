@@ -1,8 +1,8 @@
-package fr.lille1.iagl.idl.impl;
+package fr.lille1.iagl.idl.engine.impl;
 
 import java.util.List;
 
-import fr.lille1.iagl.idl.CodeSearchEngine;
+import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 
 public abstract class AbstractCodeSearchEngine implements CodeSearchEngine {
 
