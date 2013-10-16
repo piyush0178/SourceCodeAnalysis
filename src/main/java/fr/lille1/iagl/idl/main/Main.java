@@ -20,7 +20,7 @@ public class Main {
 		final CodeSearchEngine engine = new CodeSearchEngineDatabaseImpl(
 				DatabaseConnection.getConnection());
 
-		engine.findClassesAnnotatedWith(null);
+		engine.findType(null);
 
 	}
 
