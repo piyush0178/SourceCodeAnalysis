@@ -16,7 +16,6 @@ import java.util.List;
  * 
  */
 public interface CodeSearchEngine<T> {
-
 	enum TypeKind {
 		CLASS, INTERFACE, ENUM, PRIMITIVE, EXCEPTION, ANNOTATION
 	}
@@ -36,14 +35,19 @@ public interface CodeSearchEngine<T> {
 
 		String getFullyQualifiedPackageName();
 
-		TypeKind getKind();
+		TypeKind getKind(); // optional
 
 		Location getDeclaration();
 	}
 
 	interface Member {
+		/** returns the class that defines this method */
+		Type getDeclaringType();
+
+		/** returns the class of the field or the returned object */
 		Type getType();
 
+		/** returns the name of this member (e.g. the field name) */
 		String getName();
 	}
 
