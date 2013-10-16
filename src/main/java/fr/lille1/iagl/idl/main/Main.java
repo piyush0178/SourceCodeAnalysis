@@ -20,8 +20,9 @@ public class Main {
 		final CodeSearchEngine engine = new CodeSearchEngineDatabaseImpl(
 				DatabaseConnection.getConnection());
 
-		engine.findType(null);
+		engine.findType("RandomAccessFile");
 
+		DatabaseConnection.closeConnection();
 	}
 
 }

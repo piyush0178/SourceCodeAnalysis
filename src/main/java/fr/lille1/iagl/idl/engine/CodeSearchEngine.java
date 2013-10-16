@@ -2,6 +2,11 @@ package fr.lille1.iagl.idl.engine;
 
 import java.util.List;
 
+import fr.lille1.iagl.idl.bean.Field;
+import fr.lille1.iagl.idl.bean.Location;
+import fr.lille1.iagl.idl.bean.Method;
+import fr.lille1.iagl.idl.bean.Type;
+
 /**
  * CodeQuery specifies a list of methods for querying source code. It is
  * designed with Java in mind but should work with many other languages as well.
@@ -16,48 +21,6 @@ import java.util.List;
  * 
  */
 public interface CodeSearchEngine {
-
-	enum TypeKind {
-		CLASS, INTERFACE, ENUM, PRIMITIVE, EXCEPTION, ANNOTATION
-	}
-
-	interface Location {
-		/**
-		 * returns a path of the file containing a code element. E.g.
-		 * "./foo/Toto.java"
-		 */
-		String getFilePath();
-
-		int getLineNumber(); // optional
-	}
-
-	interface Type {
-		String getName();
-
-		String getFullyQualifiedPackageName();
-
-		TypeKind getKind(); // optional
-
-		Location getDeclaration();
-	}
-
-	interface Member {
-		/** returns the class that defines this method */
-		Type getDeclaringType();
-
-		/** returns the class of the field or the returned object */
-		Type getType();
-
-		/** returns the name of this member (e.g. the field name) */
-		String getName();
-	}
-
-	interface Field extends Member {
-	}
-
-	interface Method extends Member {
-		List<Type> getParamaters();
-	}
 
 	/**
 	 * returns the type (and its location through getLocation) of type typeName

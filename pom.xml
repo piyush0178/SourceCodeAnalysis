@@ -17,6 +17,7 @@
 						<source>1.7</source>
 						<target>1.7</target>
 						<encoding>UTF-8</encoding>
+						<optimize>true</optimize>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -61,6 +62,14 @@
 			<groupId>org.basex</groupId>
 			<artifactId>basex-api</artifactId>
 			<version>7.6</version>
+		</dependency>
+
+		<!-- Lombok : http://projectlombok.org/ -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.12.2</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Tests -->
