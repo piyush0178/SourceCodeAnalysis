@@ -16,6 +16,7 @@ import java.util.List;
  * 
  */
 public interface CodeSearchEngine<T> {
+
 	enum TypeKind {
 		CLASS, INTERFACE, ENUM, PRIMITIVE, EXCEPTION, ANNOTATION
 	}

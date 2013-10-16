@@ -6,6 +6,42 @@
 	<artifactId>SourceCodeAnalysis</artifactId>
 	<version>0.0.1</version>
 
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!-- Need Java 5, which is the default since v2.3 of the maven-compiler-plugin. -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.5.1</version>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>xjc</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<outputDirectory></outputDirectory>
+					<packageName>fr.lille1.iagl.idl.generated</packageName>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<repositories>
 		<repository>
 			<id>basex</id>
@@ -23,7 +59,7 @@
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
-			<version>2.1</version>
+			<version>2.2.6</version>
 		</dependency>
 
 		<dependency>
