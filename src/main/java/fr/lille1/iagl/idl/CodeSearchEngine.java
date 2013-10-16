@@ -15,7 +15,8 @@ import java.util.List;
  * @author Martin Monperrus <martin.monperrus@univ-lille1.fr>
  * 
  */
-public interface CodeSearchEngine<T> {
+public interface CodeSearchEngine {
+
 	enum TypeKind {
 		CLASS, INTERFACE, ENUM, PRIMITIVE, EXCEPTION, ANNOTATION
 	}
@@ -59,59 +60,59 @@ public interface CodeSearchEngine<T> {
 	}
 
 	/** returns the type (and its location through getLocation) of type typeName */
-	Type findType(String typeName, T data);
+	Type findType(String typeName);
 
 	/** returns all subtypes of type typeName */
-	List<Type> findSubTypesOf(String typeName, T data);
+	List<Type> findSubTypesOf(String typeName);
 
 	/** returns all fields typed with typeName */
-	List<Field> findFieldsTypedWith(String typeName, T data);
+	List<Field> findFieldsTypedWith(String typeName);
 
 	/** returns all read accesses of the field given as parameter */
-	List<Location> findAllReadAccessesOf(Field field, T data);
+	List<Location> findAllReadAccessesOf(Field field);
 
 	/**
 	 * returns all write accesses of the field given as parameter (this.foo =
 	 * ... )
 	 */
-	List<Location> findAllWriteAccessesOf(Field field, T data);
+	List<Location> findAllWriteAccessesOf(Field field);
 
 	/**
 	 * returns all methods of typeName (does not consider the inherited methods)
 	 */
-	List<Method> findMethodsOf(String typeName, T data);
+	List<Method> findMethodsOf(String typeName);
 
 	/** returns all methods returning typeName */
-	List<Method> findMethodsReturning(String typeName, T data);
+	List<Method> findMethodsReturning(String typeName);
 
 	/** returns all methods using typeName as parameter */
-	List<Method> findMethodsTakingAsParameter(String typeName, T data);
+	List<Method> findMethodsTakingAsParameter(String typeName);
 
 	/** returns all methods called methodName */
-	List<Method> findMethodsCalled(String methodName, T data);
+	List<Method> findMethodsCalled(String methodName);
 
 	/** returns all methods overriding the given method */
-	List<Method> findOverridingMethodsOf(Method method, T data);
+	List<Method> findOverridingMethodsOf(Method method);
 
 	/**
 	 * returns all locations where there is an instance creation of typeName:
 	 * new X()
 	 */
-	List<Location> findNewOf(String className, T data);
+	List<Location> findNewOf(String className);
 
 	/** returns all locations where there is a cast to typeName */
-	List<Location> findCastsTo(String typeName, T data);
+	List<Location> findCastsTo(String typeName);
 
 	/** returns all locations where there is an instanceof check to typeName */
-	List<Location> findInstanceOf(String typeName, T data);
+	List<Location> findInstanceOf(String typeName);
 
 	/** returns all methods throwing this exception */
-	List<Method> findMethodsThrowing(String exceptionName, T data);
+	List<Method> findMethodsThrowing(String exceptionName);
 
 	/** returns all locations where there is a cast to className */
-	List<Location> findCatchOf(String exceptionName, T data);
+	List<Location> findCatchOf(String exceptionName);
 
 	/** returns all classes annotated with annotationName */
-	List<Type> findClassesAnnotatedWith(String annotationName, T data);
+	List<Type> findClassesAnnotatedWith(String annotationName);
 
 }
