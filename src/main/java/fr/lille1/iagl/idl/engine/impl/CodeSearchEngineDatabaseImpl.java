@@ -2,9 +2,10 @@ package fr.lille1.iagl.idl.engine.impl;
 
 import java.util.List;
 
+import javax.xml.namespace.QName;
 import javax.xml.xquery.XQConnection;
 import javax.xml.xquery.XQException;
-import javax.xml.xquery.XQExpression;
+import javax.xml.xquery.XQPreparedExpression;
 import javax.xml.xquery.XQResultSequence;
 
 import fr.lille1.iagl.idl.bean.Field;
@@ -24,16 +25,21 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	@Override
 	public Type findType(final String typeName) {
-		XQExpression expression;
+		XQPreparedExpression xqpe;
 		try {
-			expression = connection.createExpression();
-			final XQResultSequence results = expression
-					.executeQuery("//class[name=" + typeName + "]");
+			xqpe = connection
+					.prepareExpression("declare variable $x as xs:string external; for $exp in //class[name=$x] return $exp");
 
-			results.writeSequence(System.out, null);
+			xqpe.bindString(new QName("x"), typeName, null);
+
+			final XQResultSequence rs = xqpe.executeQuery();
+
+			while (rs.next()) {
+				System.out.println(rs.getItemAsString(null));
+			}
 
 		} catch (final XQException e) {
-			throw new RuntimeException("Ca suxxxx !");
+			throw new RuntimeException("Ca suxxxx grave : " + e.getMessage(), e);
 		}
 		return null;
 	}
