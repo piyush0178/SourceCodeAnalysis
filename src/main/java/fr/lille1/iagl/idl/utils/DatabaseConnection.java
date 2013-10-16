@@ -6,13 +6,13 @@ import javax.xml.xquery.XQException;
 
 import net.xqj.basex.BaseXXQDataSource;
 
-public class DatabaseConnexion {
+public class DatabaseConnection {
 
-	private final DatabaseConnexion dbConnection = new DatabaseConnexion();
+	private final DatabaseConnection dbConnection = new DatabaseConnection();
 
 	private XQConnection connection;
 
-	private DatabaseConnexion() {
+	private DatabaseConnection() {
 		final XQDataSource dataSource = new BaseXXQDataSource();
 		try {
 			dataSource.setProperty("serverName", "localhost");
@@ -32,7 +32,7 @@ public class DatabaseConnexion {
 	 * 
 	 * @return
 	 */
-	public DatabaseConnexion getDbConnection() {
+	public DatabaseConnection getDbConnection() {
 		return dbConnection;
 	}
 
