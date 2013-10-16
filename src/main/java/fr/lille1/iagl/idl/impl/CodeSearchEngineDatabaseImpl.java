@@ -3,22 +3,32 @@ package fr.lille1.iagl.idl.impl;
 import java.util.List;
 
 import javax.xml.xquery.XQConnection;
+import javax.xml.xquery.XQException;
+import javax.xml.xquery.XQExpression;
+import javax.xml.xquery.XQResultSequence;
 
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
-import fr.lille1.iagl.idl.utils.DatabaseConnection;
 
 public class CodeSearchEngineDatabaseImpl extends AbstractCodeSearchEngine {
 
 	private final XQConnection connection;
 
-	public CodeSearchEngineDatabaseImpl() {
-		connection = DatabaseConnection.getConnection();
+	public CodeSearchEngineDatabaseImpl(final XQConnection connection) {
+		this.connection = connection;
 	}
 
 	@Override
 	public fr.lille1.iagl.idl.CodeSearchEngine.Type findType(
 			final String typeName) {
-		// TODO Auto-generated method stub
+		XQExpression expression;
+		try {
+			expression = connection.createExpression();
+			@SuppressWarnings("unused")
+			final XQResultSequence results = expression.executeQuery("//unit");
+
+		} catch (final XQException e) {
+			throw new RuntimeException("Ca suxxxx !");
+		}
 		return null;
 	}
 
