@@ -1,5 +1,8 @@
 package fr.lille1.iagl.idl.engine.impl;
 
+import java.io.IOException;
+import java.net.ContentHandler;
+import java.net.URLConnection;
 import java.util.List;
 
 import javax.xml.xquery.XQConnection;
@@ -7,12 +10,19 @@ import javax.xml.xquery.XQException;
 import javax.xml.xquery.XQPreparedExpression;
 import javax.xml.xquery.XQResultSequence;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
+
 import fr.lille1.iagl.idl.bean.Field;
 import fr.lille1.iagl.idl.bean.Location;
 import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
+import fr.lille1.iagl.idl.preliminarywork.Parse;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
@@ -31,24 +41,15 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 		final Type type = new Type();
 		try {
 
-			type.setName(typeName);
-
 			final String query = "for $x in doc('" + filePath
 					+ "')//unit[class/name='" + typeName + "'] return $x";
 
-			final XQPreparedExpression xqpe = connection
-					.prepareExpression(query);
-
-			final Long start = System.currentTimeMillis();
-			final XQResultSequence results = xqpe.executeQuery();
-			final Long end = System.currentTimeMillis();
+			XQResultSequence results = execute(query);
 
 			while (results.next()) {
 				final String res = results.getItemAsString(null);
 				System.out.println(res);
 			}
-
-			System.out.println((end - start));
 		} catch (final XQException e) {
 			throw new RuntimeException("fyndType(" + typeName + ") FAIL :"
 					+ e.getMessage(), e);
@@ -65,6 +66,18 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Field> findFieldsTypedWith(final String typeName) {
 		// TODO Auto-generated method stub
+		try {
+			final String query = "doc('" + filePath
+					+ "')//unit/unit/class[name='" + typeName
+					+ "']/block/decl_stmt/decl";
+			XQResultSequence results = execute(query);
+			
+			XMLReader saxReader = XMLReaderFactory.createXMLReader();
+			saxReader.setContentHandler(new DefaultHandler());
+		} catch (XQException | SAXException e) {
+			throw new RuntimeException(e);
+		}
+
 		return null;
 	}
 
@@ -83,7 +96,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Method> findMethodsOf(final String typeName) {
 		// TODO Auto-generated method stub
-		//requete xquery : //unit/class/block/function[type/name="typeName"]/name
+		// requete xquery :
+		// //unit/class/block/function[type/name="typeName"]/name
 		return null;
 	}
 
@@ -147,4 +161,12 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 		throw new WillNeverBeImplementedMethodException(
 				"Méthode impossible à implémenter en utilisant SrcML");
 	}
+
+	private XQResultSequence execute(String query) throws XQException {
+		XQPreparedExpression xqpe;
+		xqpe = connection.prepareExpression(query);
+		return xqpe.executeQuery();
+
+	}
+
 }

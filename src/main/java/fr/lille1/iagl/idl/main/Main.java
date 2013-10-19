@@ -21,8 +21,16 @@ public class Main {
 		final CodeSearchEngine engine = new CodeSearchEngineDatabaseImpl(
 				DatabaseConnection.getConnection(), Constantes.JAVA_XML);
 
-		engine.findType("RandomAccessFile");
-
+		long start, end;
+		
+		start = System.currentTimeMillis();
+		//engine.findType("ObjectOutputStream");
+		engine.findFieldsTypedWith("Reader");
+		end = System.currentTimeMillis();
+		
+		System.out.println("findType :"+ (end-start) +" msec");
+		
+		
 		DatabaseConnection.closeConnection();
 
 	}
