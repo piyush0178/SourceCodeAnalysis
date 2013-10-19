@@ -1,8 +1,5 @@
 package fr.lille1.iagl.idl.engine.impl;
 
-import java.io.IOException;
-import java.net.ContentHandler;
-import java.net.URLConnection;
 import java.util.List;
 
 import javax.xml.xquery.XQConnection;
@@ -10,7 +7,6 @@ import javax.xml.xquery.XQException;
 import javax.xml.xquery.XQPreparedExpression;
 import javax.xml.xquery.XQResultSequence;
 
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
@@ -22,7 +18,6 @@ import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
-import fr.lille1.iagl.idl.preliminarywork.Parse;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
@@ -70,8 +65,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			final String query = "doc('" + filePath
 					+ "')//unit/unit/class[name='" + typeName
 					+ "']/block/decl_stmt/decl";
-			XQResultSequence results = execute(query); 
-			
+			XQResultSequence results = execute(query);
+
 			XMLReader saxReader = XMLReaderFactory.createXMLReader();
 			saxReader.setContentHandler(new DefaultHandler());
 		} catch (XQException | SAXException e) {
