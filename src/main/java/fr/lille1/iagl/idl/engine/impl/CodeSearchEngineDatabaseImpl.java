@@ -13,14 +13,17 @@ import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
-import fr.lille1.iagl.idl.utils.Constantes;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	private final XQConnection connection;
 
-	public CodeSearchEngineDatabaseImpl(final XQConnection connection) {
+	private final String filePath;
+
+	public CodeSearchEngineDatabaseImpl(final XQConnection connection,
+			final String filePath) {
 		this.connection = connection;
+		this.filePath = filePath;
 	}
 
 	@Override
@@ -30,8 +33,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 			type.setName(typeName);
 
-			final String query = "for $x in doc('" + Constantes.JAVA_XML
-					+ "')//class[name='" + typeName + "'] return $x";
+			final String query = "for $x in doc('" + filePath
+					+ "')//unit[class/name='" + typeName + "'] return $x";
 
 			final XQPreparedExpression xqpe = connection
 					.prepareExpression(query);
@@ -41,7 +44,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			final Long end = System.currentTimeMillis();
 
 			while (results.next()) {
-				System.out.println(results.getItemAsString(null));
+				final String res = results.getItemAsString(null);
+				System.out.println(res);
 			}
 
 			System.out.println((end - start));
