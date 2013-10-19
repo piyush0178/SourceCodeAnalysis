@@ -8,8 +8,8 @@ import lombok.Data;
 @Data
 public class Location {
 
-	public String filePath;
+	private String filePath;
 
-	public int lineNumber;
+	private int lineNumber;
 
 }

@@ -8,12 +8,12 @@ import lombok.Data;
 @Data
 public class Type {
 
-	public String name;
+	private String name;
 
-	public String fullyQualifiedPackageName;
+	private String fullyQualifiedPackageName;
 
-	public TypeKind kind;
+	private TypeKind kind;
 
-	public Location declaration;
+	private Location declaration;
 
 }

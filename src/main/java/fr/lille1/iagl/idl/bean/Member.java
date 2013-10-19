@@ -8,10 +8,10 @@ import lombok.Data;
 @Data
 public class Member {
 
-	public Type declaringType;
+	private Type declaringType;
 
-	public Type type;
+	private Type type;
 
-	public String name;
+	private String name;
 
 }

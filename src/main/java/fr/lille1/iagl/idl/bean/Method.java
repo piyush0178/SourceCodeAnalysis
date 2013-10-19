@@ -10,6 +10,6 @@ import lombok.Data;
 @Data
 public class Method extends Member {
 
-	public List<Type> parameters;
+	private List<Type> parameters;
 
 }

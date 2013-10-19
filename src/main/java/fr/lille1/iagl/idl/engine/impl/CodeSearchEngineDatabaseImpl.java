@@ -4,10 +4,8 @@ import java.util.List;
 
 import javax.xml.xquery.XQConnection;
 import javax.xml.xquery.XQException;
-import javax.xml.xquery.XQItemType;
 import javax.xml.xquery.XQPreparedExpression;
 import javax.xml.xquery.XQResultSequence;
-import javax.xml.xquery.XQStaticContext;
 
 import fr.lille1.iagl.idl.bean.Field;
 import fr.lille1.iagl.idl.bean.Location;
@@ -15,6 +13,7 @@ import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
+import fr.lille1.iagl.idl.utils.Constantes;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
@@ -26,28 +25,31 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	@Override
 	public Type findType(final String typeName) {
-		final XQPreparedExpression prepExpr;
+		final Type type = new Type();
 		try {
 
-			final XQStaticContext context = connection.getStaticContext();
-			context.setContextItemStaticType(connection
-					.createDocumentElementType(connection.createElementType(
-							null, XQItemType.XQBASETYPE_UNTYPED)));
+			type.setName(typeName);
 
-			final XQPreparedExpression xqpe = connection.prepareExpression(
-					"for $exp in //class[name='RandomAccessFile'] return $exp",
-					context);
+			final String query = "for $x in doc('" + Constantes.JAVA_XML
+					+ "')//class[name='" + typeName + "'] return $x";
 
+			final XQPreparedExpression xqpe = connection
+					.prepareExpression(query);
+
+			final Long start = System.currentTimeMillis();
 			final XQResultSequence results = xqpe.executeQuery();
+			final Long end = System.currentTimeMillis();
 
 			while (results.next()) {
 				System.out.println(results.getItemAsString(null));
 			}
 
+			System.out.println((end - start));
 		} catch (final XQException e) {
-			throw new RuntimeException("Ca suxxxx grave : " + e.getMessage(), e);
+			throw new RuntimeException("fyndType(" + typeName + ") FAIL :"
+					+ e.getMessage(), e);
 		}
-		return null;
+		return type;
 	}
 
 	@Override
