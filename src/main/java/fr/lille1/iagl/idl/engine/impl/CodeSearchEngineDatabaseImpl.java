@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.xquery.XQConnection;
@@ -25,6 +24,15 @@ import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
+
+	private static final String FUNCTION_LIST = "function_list";
+	private static final String TYPE = "type";
+	private static final String PARAM = "param";
+	private static final String FUNCTION = "function";
+	private static final String SPECIFIER = "specifier";
+	private static final String TYPE_NAME = "type_name";
+	private static final String METHOD_NAME = "method_name";
+	private static final String PARAMETER_LIST = "parameter_list";
 
 	private final XQConnection connection;
 
@@ -48,7 +56,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 			while (results.next()) {
 				final String res = results.getItemAsString(null);
-				System.out.println(res);
 			}
 		} catch (final XQException e) {
 			throw new RuntimeException("fyndType(" + typeName + ") FAIL :"
@@ -111,6 +118,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	@Override
 	public List<Method> findMethodsTakingAsParameter(final String typeName) {
+		// TODO JIV : ecrire Junit
 		try {
 			final String query = "declare variable $file as xs:string external;"
 					+ " declare variable $typeName as xs:string external;"
@@ -126,13 +134,13 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 					+ "				for $param in $function/parameter_list/param"
 					+ "				return"
 					+ "				<param>"
-					+ "					<type>{$param/decl/type/name}</type>"
-					+ "					<name>{$param/name}</name>"
+					+ "					<type>{$param/decl/type/name/text()}</type>"
 					+ "				</param>"
 					+ "			}"
 					+ "			</parameter_list>"
 					+ "		</function>"
-					+ " return" + "	<functionList>{$functions}</functionList>";
+					+ " return"
+					+ "	<function_list>{$functions}</function_list>";
 
 			final XQPreparedExpression preparedQuery = connection
 					.prepareExpression(query);
@@ -142,8 +150,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 			final XQResultSequence resultSequence = preparedQuery
 					.executeQuery();
-
-			System.out.println(resultSequence.getSequenceAsString(null));
 
 			return parseFunctionToMethod(resultSequence.getSequenceAsStream());
 		} catch (final XQException e) {
@@ -158,6 +164,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	}
 
 	/**
+	 * TODO JIV : documentation
+	 * 
 	 * @param xmlReader
 	 * @throws XMLStreamException
 	 */
@@ -170,65 +178,57 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			final int eventType = xmlReader.getEventType();
 			if (eventType == XMLStreamReader.END_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
-				case "function":
-					// toutes les infos de la fonction été lu et enregistrer
-					// dans l'object Method, on peut l'ajouter à la liste
-					// résultat.
+				case FUNCTION:
 					methodList.add(method);
-				default:
-					break;
+				case FUNCTION_LIST:
+					return methodList;
 				}
 			}
 			if (eventType == XMLStreamReader.START_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
-				case "function":
+				case FUNCTION:
 					method = new Method();
 					break;
-				case "specifier":
+				case SPECIFIER:
 					method.setDeclaringType(findType(xmlReader.getElementText()));
 					break;
-				case "type_name":
+				case TYPE_NAME:
 					method.setDeclaringType(findType(xmlReader.getElementText()));
 					break;
-				case "method_name":
+				case METHOD_NAME:
 					method.setName(xmlReader.getElementText());
 					break;
-				default:
+				case PARAMETER_LIST:
+					method.setParameters(parseFunctionParameterList(xmlReader));
 					break;
 				}
 			}
 		}
-		return methodList;
+		throw new RuntimeException("This case will never append");
 	}
 
 	/**
-	 * StAX based parser
+	 * TODO JIV : documentation
 	 * 
 	 * @param xmlReader
 	 * @throws XMLStreamException
 	 */
-	private Method parseMethodsTakingAsParameterResults(
+	private List<Type> parseFunctionParameterList(
 			final XMLStreamReader xmlReader) throws XMLStreamException {
-		final Method method = new Method();
-
+		final List<Type> paramList = new ArrayList<Type>();
 		while (xmlReader.hasNext()) {
 			xmlReader.next();
-			switch (xmlReader.getEventType()) {
-			case XMLStreamConstants.START_ELEMENT:
-				switch (xmlReader.getLocalName()) {
-				case "toto":
-					break;
-
-				}
-
-				break;
-
-			default:
-				break;
+			final int eventType = xmlReader.getEventType();
+			if (eventType == XMLStreamReader.END_ELEMENT
+					&& PARAMETER_LIST.equals(xmlReader.getLocalName())) {
+				return paramList;
+			}
+			if (eventType == XMLStreamReader.START_ELEMENT
+					&& TYPE.equals(xmlReader.getLocalName())) {
+				paramList.add(findType(xmlReader.getElementText()));
 			}
 		}
-		return method;
-
+		throw new RuntimeException("This case will never append");
 	}
 
 	@Override
