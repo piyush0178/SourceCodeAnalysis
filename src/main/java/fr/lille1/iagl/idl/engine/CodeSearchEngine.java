@@ -28,7 +28,7 @@ public interface CodeSearchEngine {
 	 * @param typeName
 	 * @return
 	 */
-	Type findType(String typeName);
+	Type findType(final String typeName);
 
 	/**
 	 * returns all subtypes of type typeName
@@ -36,7 +36,7 @@ public interface CodeSearchEngine {
 	 * @param typeName
 	 * @return
 	 */
-	List<Type> findSubTypesOf(String typeName);
+	List<Type> findSubTypesOf(final String typeName);
 
 	/**
 	 * returns all fields typed with typeName
@@ -44,7 +44,7 @@ public interface CodeSearchEngine {
 	 * @param typeName
 	 * @return
 	 */
-	List<Field> findFieldsTypedWith(String typeName);
+	List<Field> findFieldsTypedWith(final String typeName);
 
 	/**
 	 * returns all read accesses of the field given as parameter
@@ -52,7 +52,7 @@ public interface CodeSearchEngine {
 	 * @param field
 	 * @return
 	 */
-	List<Location> findAllReadAccessesOf(Field field);
+	List<Location> findAllReadAccessesOf(final Field field);
 
 	/**
 	 * returns all write accesses of the field given as parameter (this.foo =
@@ -61,7 +61,7 @@ public interface CodeSearchEngine {
 	 * @param field
 	 * @return
 	 */
-	List<Location> findAllWriteAccessesOf(Field field);
+	List<Location> findAllWriteAccessesOf(final Field field);
 
 	/**
 	 * returns all methods of typeName (does not consider the inherited methods)
@@ -69,7 +69,7 @@ public interface CodeSearchEngine {
 	 * @param typeName
 	 * @return
 	 */
-	List<Method> findMethodsOf(String typeName);
+	List<Method> findMethodsOf(final String typeName);
 
 	/**
 	 * returns all methods returning typeName
@@ -77,7 +77,9 @@ public interface CodeSearchEngine {
 	 * @param typeName
 	 * @return
 	 */
-	List<Method> findMethodsReturning(String typeName);
+	List<Method> findMethodsReturning(final String typeName);
+
+	// Jules
 
 	/**
 	 * returns all methods using typeName as parameter
@@ -85,7 +87,7 @@ public interface CodeSearchEngine {
 	 * @param typeName
 	 * @return
 	 */
-	List<Method> findMethodsTakingAsParameter(String typeName);
+	List<Method> findMethodsTakingAsParameter(final String typeName);
 
 	/**
 	 * returns all methods called methodName
@@ -93,7 +95,7 @@ public interface CodeSearchEngine {
 	 * @param methodName
 	 * @return
 	 */
-	List<Method> findMethodsCalled(String methodName);
+	List<Method> findMethodsCalled(final String methodName);
 
 	/**
 	 * returns all methods overriding the given method
@@ -101,7 +103,7 @@ public interface CodeSearchEngine {
 	 * @param method
 	 * @return
 	 */
-	List<Method> findOverridingMethodsOf(Method method);
+	List<Method> findOverridingMethodsOf(final Method method);
 
 	/**
 	 * returns all locations where there is an instance creation of typeName:
@@ -110,7 +112,7 @@ public interface CodeSearchEngine {
 	 * @param className
 	 * @return
 	 */
-	List<Location> findNewOf(String className);
+	List<Location> findNewOf(final String className);
 
 	/**
 	 * returns all locations where there is a cast to typeName
@@ -118,7 +120,7 @@ public interface CodeSearchEngine {
 	 * @param typeName
 	 * @return
 	 */
-	List<Location> findCastsTo(String typeName);
+	List<Location> findCastsTo(final String typeName);
 
 	/**
 	 * returns all locations where there is an instanceof check to typeName
@@ -126,7 +128,7 @@ public interface CodeSearchEngine {
 	 * @param typeName
 	 * @return
 	 */
-	List<Location> findInstanceOf(String typeName);
+	List<Location> findInstanceOf(final String typeName);
 
 	/**
 	 * returns all methods throwing this exception
@@ -134,7 +136,7 @@ public interface CodeSearchEngine {
 	 * @param exceptionName
 	 * @return
 	 */
-	List<Method> findMethodsThrowing(String exceptionName);
+	List<Method> findMethodsThrowing(final String exceptionName);
 
 	/**
 	 * returns all locations where there is a cast to className
@@ -142,7 +144,7 @@ public interface CodeSearchEngine {
 	 * @param exceptionName
 	 * @return
 	 */
-	List<Location> findCatchOf(String exceptionName);
+	List<Location> findCatchOf(final String exceptionName);
 
 	/**
 	 * returns all classes annotated with annotationName
@@ -151,5 +153,5 @@ public interface CodeSearchEngine {
 	 * @return
 	 */
 	@Deprecated
-	List<Type> findClassesAnnotatedWith(String annotationName);
+	List<Type> findClassesAnnotatedWith(final String annotationName);
 }
