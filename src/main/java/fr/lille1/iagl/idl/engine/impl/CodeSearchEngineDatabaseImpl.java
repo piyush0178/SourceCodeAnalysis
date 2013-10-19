@@ -83,6 +83,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Method> findMethodsOf(final String typeName) {
 		// TODO Auto-generated method stub
+		//requete xquery : //unit/class/block/function[type/name="typeName"]/name
 		return null;
 	}
 
