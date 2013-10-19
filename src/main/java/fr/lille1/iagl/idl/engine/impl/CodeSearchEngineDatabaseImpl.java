@@ -70,7 +70,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			final String query = "doc('" + filePath
 					+ "')//unit/unit/class[name='" + typeName
 					+ "']/block/decl_stmt/decl";
-			XQResultSequence results = execute(query);
+			XQResultSequence results = execute(query); 
 			
 			XMLReader saxReader = XMLReaderFactory.createXMLReader();
 			saxReader.setContentHandler(new DefaultHandler());
