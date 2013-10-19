@@ -24,7 +24,7 @@ public class DatabaseConnection {
 			// dataSource.setProperty("user", );
 			// dataSource.setProperty("password", );
 
-			connection = dataSource.getConnection("user", "user");
+			connection = dataSource.getConnection("admin", "admin");
 
 			// connection = dataSource.getConnection();
 
