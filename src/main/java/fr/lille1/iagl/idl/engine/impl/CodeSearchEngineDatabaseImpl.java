@@ -1,7 +1,11 @@
 package fr.lille1.iagl.idl.engine.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.xquery.XQConnection;
 import javax.xml.xquery.XQException;
 import javax.xml.xquery.XQPreparedExpression;
@@ -39,7 +43,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			final String query = "for $x in doc('" + filePath
 					+ "')//unit[class/name='" + typeName + "'] return $x";
 
-			XQResultSequence results = execute(query);
+			final XQResultSequence results = execute(query);
 
 			while (results.next()) {
 				final String res = results.getItemAsString(null);
@@ -65,9 +69,9 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			final String query = "doc('" + filePath
 					+ "')//unit/unit/class[name='" + typeName
 					+ "']/block/decl_stmt/decl";
-			XQResultSequence results = execute(query);
+			final XQResultSequence results = execute(query);
 
-			XMLReader saxReader = XMLReaderFactory.createXMLReader();
+			final XMLReader saxReader = XMLReaderFactory.createXMLReader();
 			saxReader.setContentHandler(new DefaultHandler());
 		} catch (XQException | SAXException e) {
 			throw new RuntimeException(e);
@@ -102,10 +106,72 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 		return null;
 	}
 
+	// Jules
+
 	@Override
 	public List<Method> findMethodsTakingAsParameter(final String typeName) {
-		// TODO Auto-generated method stub
-		return null;
+		final List<Method> methods = new ArrayList<Method>();
+		try {
+
+			final String xPathQuery = "//unit/unit/function[parameter_list/param/decl/type/name = '"
+					+ typeName + "']";
+
+			final String query = "for $x in doc('" + filePath + "')"
+					+ xPathQuery
+					+ " return ($x/type/specifier, $x/type/name, $x/name)";
+
+			final XQPreparedExpression preparedExp = connection
+					.prepareExpression(query);
+
+			final XQResultSequence results = preparedExp.executeQuery();
+
+			// TODO JIV : delete
+			System.out.println(results.getSequenceAsString(null));
+
+			while (results.next()) {
+				parseMethodsTakingAsParameterResults(results
+						.getSequenceAsStream());
+			}
+
+		} catch (final XQException e) {
+			throw new RuntimeException("FAIL : findMethodsTakingAsParameter("
+					+ typeName + ") : " + e.getMessage(), e);
+		} catch (final XMLStreamException e) {
+			throw new RuntimeException("FAIL : findMethodsTakingAsParameter("
+					+ typeName + ") : " + e.getMessage(), e);
+		}
+		return methods;
+
+	}
+
+	/**
+	 * StAX based parser
+	 * 
+	 * @param xmlReader
+	 * @throws XMLStreamException
+	 */
+	private Method parseMethodsTakingAsParameterResults(
+			final XMLStreamReader xmlReader) throws XMLStreamException {
+		final Method method = new Method();
+
+		while (xmlReader.hasNext()) {
+			xmlReader.next();
+			switch (xmlReader.getEventType()) {
+			case XMLStreamConstants.START_ELEMENT:
+				switch (xmlReader.getLocalName()) {
+				case "toto":
+					break;
+
+				}
+
+				break;
+
+			default:
+				break;
+			}
+		}
+		return method;
+
 	}
 
 	@Override
@@ -157,7 +223,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 				"Méthode impossible à implémenter en utilisant SrcML");
 	}
 
-	private XQResultSequence execute(String query) throws XQException {
+	private XQResultSequence execute(final String query) throws XQException {
 		XQPreparedExpression xqpe;
 		xqpe = connection.prepareExpression(query);
 		return xqpe.executeQuery();
