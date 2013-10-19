@@ -8,8 +8,14 @@ import lombok.Data;
 @Data
 public class Location {
 
+	/**
+	 * A path of the file containing a code element. E.g. "./foo/Toto.java"
+	 */
 	private String filePath;
 
+	/**
+	 * optional
+	 */
 	private int lineNumber;
 
 }

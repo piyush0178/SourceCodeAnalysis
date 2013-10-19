@@ -12,6 +12,9 @@ public class Type {
 
 	private String fullyQualifiedPackageName;
 
+	/**
+	 * optional
+	 */
 	private TypeKind kind;
 
 	private Location declaration;
