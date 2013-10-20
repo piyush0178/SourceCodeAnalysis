@@ -43,6 +43,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	 */
 	public static JCS cache;
 
+	public static int cpt = 0;
+
 	public CodeSearchEngineDatabaseImpl(final XQConnection connection,
 			final String filePath) {
 		this.connection = connection;
@@ -87,6 +89,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 					null);
 			final XMLStreamReader xmlReader = findTypePreparedQuery
 					.executeQuery().getSequenceAsStream();
+
+			cpt++;
 
 			if (isResultEmpty(xmlReader)) {
 				final Type unknowType = new UnknowType(typeName);
@@ -191,6 +195,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 		try {
 			final XQPreparedExpression preparedQuery = preparedQueries
 					.getFindMethodsTakingAsParameterQuery();
+
 			preparedQuery.bindString(new QName("typeName"), typeName, null);
 
 			return parser.parseFunctionToMethod(preparedQuery.executeQuery()
