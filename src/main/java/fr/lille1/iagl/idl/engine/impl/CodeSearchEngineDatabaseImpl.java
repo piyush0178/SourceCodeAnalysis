@@ -24,9 +24,9 @@ import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.constantes.JavaKeyword;
 import fr.lille1.iagl.idl.constantes.Queries;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
+import fr.lille1.iagl.idl.engine.queries.QueryAnswerParser;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
 import fr.lille1.iagl.idl.utils.PrimitiveTypesCache;
-import fr.lille1.iagl.idl.utils.QueryAnswerParser;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
