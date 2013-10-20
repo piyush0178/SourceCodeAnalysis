@@ -20,10 +20,8 @@ public class UnknowType extends Type {
 	 * @param kind
 	 * @param declaration
 	 */
-	public UnknowType(final String name,
-			final String fullyQualifiedPackageName, final TypeKind kind,
-			final Location declaration) {
-		super(name, fullyQualifiedPackageName, kind, declaration);
+	public UnknowType(final String name) {
+		super(name, "", null, null);
 	}
 
 }
