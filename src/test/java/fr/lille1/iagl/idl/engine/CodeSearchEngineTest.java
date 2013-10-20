@@ -58,10 +58,19 @@ public class CodeSearchEngineTest {
 	}
 
 	@Test
-	public void testFindTypeWithJavaKeyword() throws Exception {
-		final Type type = engine.findType("void");
+	public void testFindTypeWithJavaPrimitiveType1() throws Exception {
+		final String typeName = "void";
+		final Type type = engine.findType(typeName);
 		Assert.assertNotNull(type);
-		Assert.assertEquals("void", type.getName());
+		Assert.assertEquals(typeName, type.getName());
+	}
+
+	@Test
+	public void testFindTypeWithJavaPrimitiveType2() throws Exception {
+		final String typeName = "int";
+		final Type type = engine.findType(typeName);
+		Assert.assertNotNull(type);
+		Assert.assertEquals(typeName, type.getName());
 	}
 
 	@Test

@@ -58,6 +58,15 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 		if (!isTypeNameValid(typeName)) {
 			return null;
 		}
+		if (JavaKeyword.getPrimitiveType(typeName) != null) {
+			PrimitiveType primitiveTypeCached = PrimitiveTypesCache.cache
+					.get(typeName);
+			if (primitiveTypeCached == null) {
+				primitiveTypeCached = new PrimitiveType(typeName);
+				PrimitiveTypesCache.cache.put(typeName, primitiveTypeCached);
+			}
+			return primitiveTypeCached;
+		}
 		try {
 			// FIXME : Pour l'instant dans la requète je ne gére que les class,
 			// enum, interface et les primitives. Il manque les exceptions et
@@ -80,15 +89,14 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 			if (isResultEmpty(findTypeXQPreparedExpression.executeQuery()
 					.getSequenceAsStream())) {
-				return manageEmptyResult(typeName);
+				// FIXME : Trouver quoi faire dans ce cas la. Doit-on le gérer
+				// ou doit-on lancer une erreur ? Pour l'instant je throw une
+				// RuntimeException, ça nous aidera peut être à trouver les cas
+				// à gérer.
+				throw new RuntimeException(
+						"Ce cas ne devrait pas arriver. Si il arrive c'est que nous devons le gérer. TypeName : "
+								+ typeName);
 			} else {
-
-				// FIXME : vérifier que cela ne pose jamais de probléme de passé
-				// le typeName comme cela. On sait déja qui si on se trouve dans
-				// cette branche de ce if c'est que ce typeName existe bien dans
-				// le fichier. 9a réduit les risques mais j'ai peut être raté qq
-				// chose.
-
 				return parser.parseFindTypeResults(findTypeXQPreparedExpression
 						.executeQuery().getSequenceAsStream(), typeName);
 			}
@@ -100,33 +108,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			throw new RuntimeException(
 					"Probléme lors du parsing du XML : findType(" + typeName
 							+ ") : " + e.getMessage(), e);
-		}
-	}
-
-	/**
-	 * Gére les cas où la BD n'a rien répondu.
-	 * 
-	 * @param typeName
-	 * @return
-	 */
-	private Type manageEmptyResult(final String typeName) {
-		final JavaKeyword keyword = JavaKeyword.valueOf(typeName.toUpperCase());
-		if (keyword != null && keyword.isPrimitiveType()) {
-			PrimitiveType primitiveTypeCached = PrimitiveTypesCache.cache
-					.get(typeName);
-			if (primitiveTypeCached == null) {
-				primitiveTypeCached = new PrimitiveType(typeName);
-				PrimitiveTypesCache.cache.put(typeName, primitiveTypeCached);
-			}
-			return primitiveTypeCached;
-		} else {
-			// FIXME : Trouver quoi faire dans ce cas la. Doit-on le gérer ou
-			// doit-on lancer une erreur ? Pour l'instant je throw une
-			// RuntimeException, ça nous aidera peut être à trouver les cas à
-			// gérer.
-			throw new RuntimeException(
-					"Ce cas ne devrait pas arriver. Si il arrive c'est que nous devons le gérer. TypeName : "
-							+ typeName);
 		}
 	}
 
