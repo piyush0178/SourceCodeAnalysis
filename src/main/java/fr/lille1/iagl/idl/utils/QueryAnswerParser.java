@@ -17,6 +17,7 @@ import fr.lille1.iagl.idl.engine.CodeSearchEngine;
  */
 public class QueryAnswerParser {
 
+	private static final String CLASS = "class";
 	public static final String PATH = "path";
 	public static final String KIND = "kind";
 	public static final String TYPE = "type";
@@ -24,7 +25,6 @@ public class QueryAnswerParser {
 	public static final String PACKAGE = "package";
 	public static final String LOCATION = "location";
 	public static final String FUNCTION = "function";
-	public static final String SPECIFIER = "specifier";
 	public static final String TYPE_NAME = "type_name";
 	public static final String LINE_NUMBER = "line_number";
 	public static final String METHOD_NAME = "method_name";
@@ -135,7 +135,7 @@ public class QueryAnswerParser {
 				case FUNCTION:
 					method = new Method();
 					break;
-				case SPECIFIER:
+				case CLASS:
 					method.setDeclaringType(searchEngine.findType(xmlReader
 							.getElementText()));
 					break;
