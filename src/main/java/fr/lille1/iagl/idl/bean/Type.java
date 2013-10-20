@@ -10,6 +10,9 @@ public class Type {
 
 	private String name;
 
+	/**
+	 * Package name
+	 */
 	private String fullyQualifiedPackageName;
 
 	/**
