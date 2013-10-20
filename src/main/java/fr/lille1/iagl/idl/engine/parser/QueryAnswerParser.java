@@ -84,7 +84,7 @@ public class QueryAnswerParser {
 	 * @return
 	 * @throws XMLStreamException
 	 */
-	public Location parseLocation(final XMLStreamReader xmlReader)
+	private Location parseLocation(final XMLStreamReader xmlReader)
 			throws XMLStreamException {
 		final Location location = new Location();
 		while (xmlReader.hasNext()) {
@@ -161,8 +161,8 @@ public class QueryAnswerParser {
 	 * @param xmlReader
 	 * @throws XMLStreamException
 	 */
-	public List<Type> parseFunctionParameterList(final XMLStreamReader xmlReader)
-			throws XMLStreamException {
+	private List<Type> parseFunctionParameterList(
+			final XMLStreamReader xmlReader) throws XMLStreamException {
 		final List<Type> paramList = new ArrayList<Type>();
 		while (xmlReader.hasNext()) {
 			xmlReader.next();
