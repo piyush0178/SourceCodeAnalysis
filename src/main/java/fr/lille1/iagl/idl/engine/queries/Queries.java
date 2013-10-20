@@ -45,19 +45,17 @@ public class Queries {
 			+ " 	return"
 			+ " 	<function>"
 			+ "			<class>{$class/name/text()}</class>"
-			+ "			<type_name>{$function/type/name/text()}</type_name>"
+			+ "			<type_name>{$function/type/name[last()]/text()}</type_name>"
 			+ "			<method_name>{$function/name/text()}</method_name>"
 			+ " 		<parameter_list>"
 			+ "			{"
 			+ "				for $param in $function/parameter_list/param"
 			+ "				return"
-			+ "				<param>"
 			+ "					<type>{$param/decl/type/name/text()}</type>"
-			+ "				</param>"
 			+ "			}"
 			+ "			</parameter_list>"
 			+ "		</function>"
 			+ " return"
-			+ "	<function_list>{$functions}</function_list>";
+			+ "		<function_list>{$functions}</function_list>";
 
 }
