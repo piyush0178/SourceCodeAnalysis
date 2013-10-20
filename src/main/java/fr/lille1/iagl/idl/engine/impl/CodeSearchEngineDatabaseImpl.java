@@ -20,8 +20,10 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import fr.lille1.iagl.idl.bean.Field;
 import fr.lille1.iagl.idl.bean.Location;
 import fr.lille1.iagl.idl.bean.Method;
+import fr.lille1.iagl.idl.bean.PrimitiveType;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.bean.TypeKind;
+import fr.lille1.iagl.idl.constantes.JavaKeyword;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
 
@@ -68,41 +70,42 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			// enum et interface. Il manque les primitives, exceptions et
 			// annotations.
 			// FIXME : Je ne gére pas encore les numéros de lignes dans Location
-			final String query = "declare variable $file as xs:string external;"
-					+ " declare variable $typeName as xs:string external;"
-					+ "	let $result :="
-					+ " 	for $unit in doc($file)//unit[class/name=$typeName]"
-					+ " 	return"
-					+ "		<type>"
-					+ "			<location>"
-					+ "				<path>{data($unit/@filename)}</path>"
-					+ "				<line_number></line_number>"
-					+ "			</location>"
-					+ "			<package>"
-					+ "			{"
-					+ "				(: petite bidouille pr enlever 'package' et ';' de la déclaration du package :)"
-					+ "				substring-before(substring-after(data($unit/package),'package'), ';')"
-					+ "			}"
-					+ "			</package>"
-					+ "			<kind>"
-					+ "			{ "
-					+ "				let $kind :="
-					+ "					if($unit/class) then 'class' "
-					+ "					else if($unit/enum) then 'enum'"
-					+ "					else if($unit/interface) then 'interface'"
-					+ "					else ''"
-					+ "				return $kind"
-					+ "			}"
-					+ "			</kind>"
-					+ "		</type>"
-					+ "	return"
-					+ "		if(count($result) eq 0) then <error>The query returned nothing</error>"
-					+ "		else $result";
 
-			// la deuxiéme requête et toutes les suivantes seront plus rapides.
-			// TODO : Penser à lancer une première requéte avant que le prof
-			// prenne la main pr gagner quelques millisecondes.
+			// la deuxiéme requête et toutes les suivantes seront plus
+			// rapides.
 			if (findTypeXQPreparedExpression == null) {
+
+				final String query = "declare variable $file as xs:string external;"
+						+ " declare variable $typeName as xs:string external;"
+						+ "	let $result :="
+						+ " 	for $unit in doc($file)//unit[class/name=$typeName]"
+						+ " 	return"
+						+ "		<type>"
+						+ "			<location>"
+						+ "				<path>{data($unit/@filename)}</path>"
+						+ "				<line_number></line_number>"
+						+ "			</location>"
+						+ "			<package>"
+						+ "			{"
+						+ "				(: petite bidouille pr enlever 'package' et ';' de la déclaration du package :)"
+						+ "				substring-before(substring-after(data($unit/package),'package'), ';')"
+						+ "			}"
+						+ "			</package>"
+						+ "			<kind>"
+						+ "			{ "
+						+ "				if($unit/class) then 'class' "
+						+ "				else if($unit/enum) then 'enum'"
+						+ "				else if($unit/interface) then 'interface'"
+						+ "				else ''"
+						+ "			}"
+						+ "			</kind>"
+						+ "		</type>"
+						+ "	return"
+						+ "		if(count($result) eq 0) then <error>The query returned nothing</error>"
+						+ "		else $result";
+
+				// TODO : Penser à lancer une première requéte avant que le prof
+				// prenne la main pr gagner quelques millisecondes.
 				findTypeXQPreparedExpression = connection
 						.prepareExpression(query);
 				// on peut ne le binder que la première fois :)
@@ -115,13 +118,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 			if (resultIsEmpty(findTypeXQPreparedExpression.executeQuery()
 					.getSequenceAsStream())) {
-
-				// FIXME (Important) : il faudra ajouter des régles
-				// supplémentaires ici. Par exemple, si le mec envoie
-				// findType('void'), il faut créer le type void et le mettre en
-				// cache ou je ne sais ou. Pour l'instant ça renvoie null;
-
-				return null;
+				return manageEmptyResult(typeName);
 			} else {
 
 				// FIXME : vérifier que cela ne pose jamais de probléme de passé
@@ -141,6 +138,36 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			throw new RuntimeException(
 					"Probléme lors du parsing du XML : findType(" + typeName
 							+ ") : " + e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * Gére les cas où la BD n'a rien répondu.
+	 * 
+	 * @param typeName
+	 * @return
+	 */
+	private Type manageEmptyResult(final String typeName) {
+		if (typeName == null || StringUtils.isEmpty(typeName)) {
+			// FIXME : Trouver quoi faire dans ce cas la. Doit-on le gérer ou
+			// doit-on lancer une erreur ? Pour l'instant je throw une
+			// RuntimeException, ça nous aidera peut être à trouver les cas à
+			// gérer.
+			throw new RuntimeException(
+					"Ce cas ne devrait pas arriver. Si il arrive c'est que nous devons le gérer. TypeName : "
+							+ typeName);
+		}
+		final JavaKeyword keyword = JavaKeyword.valueOf(typeName);
+		if (keyword != null && keyword.isPrimitiveType()) {
+			return new PrimitiveType(typeName);
+		} else {
+			// FIXME : Trouver quoi faire dans ce cas la. Doit-on le gérer ou
+			// doit-on lancer une erreur ? Pour l'instant je throw une
+			// RuntimeException, ça nous aidera peut être à trouver les cas à
+			// gérer.
+			throw new RuntimeException(
+					"Ce cas ne devrait pas arriver. Si il arrive c'est que nous devons le gérer. TypeName : "
+							+ typeName);
 		}
 	}
 
