@@ -3,8 +3,10 @@
  */
 package fr.lille1.iagl.idl.engine;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +14,6 @@ import org.junit.runners.JUnit4;
 
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.constantes.Constantes;
-import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.engine.impl.CodeSearchEngineDatabaseImpl;
 import fr.lille1.iagl.idl.utils.DatabaseConnection;
 
@@ -26,19 +27,22 @@ public class CodeSearchEngineTest {
 	static CodeSearchEngine engine;
 
 	@BeforeClass
-	public static void initializeTests() {
+	public static void setUpBeforeClass() throws Exception {
 		engine = new CodeSearchEngineDatabaseImpl(
 				DatabaseConnection.getConnection(), Constantes.JAVA_XML);
 	}
 
 	@AfterClass
-	public static void fisnishTests() {
-		DatabaseConnection.closeConnection();
+	public static void tearDownAfterClass() throws Exception {
+		throw new RuntimeException("not yet implemented");
 	}
 
-	@Test
-	public void testFindType() throws Exception {
-		throw new RuntimeException("not yet implemented");
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
 	}
 
 	/**
