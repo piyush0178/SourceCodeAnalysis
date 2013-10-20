@@ -1,9 +1,0 @@
-1. DSownloader le jar ici : http://projectlombok.org/download.html
-
-2. double-cliquer sur ce jar.
-
-3. Faire pointer lombok sur l'endroit où est installer ton eclipse
-
-4. appuyer sur le bouton "install/update"
-
-5. Normalement tout est bon. Ne pas oublier de redémarrer ton eclipse.
