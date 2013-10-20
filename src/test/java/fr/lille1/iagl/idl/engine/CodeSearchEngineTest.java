@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lille1.iagl.idl;
+package fr.lille1.iagl.idl.engine;
 
 import org.junit.AfterClass;
 import org.junit.Assert;

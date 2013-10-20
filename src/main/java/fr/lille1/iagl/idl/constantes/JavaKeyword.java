@@ -3,6 +3,8 @@
  */
 package fr.lille1.iagl.idl.constantes;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Java reserved keywords
  */
@@ -12,6 +14,19 @@ public enum JavaKeyword {
 	FOR, GOTO, IF, IMPLEMENTS, IMPORT, INSTANCEOF, INT, INTERFACE, LONG,
 	NATIVE, NEW, PACKAGE, PRIVATE, PROTECTED, PUBLIC, RETURN, SHORT, STATIC,
 	STRICTFP, SUPER, SWITCH, SYNCHRONIZED, THIS, THROW, THROWS, TRANSIENT, TRY,
-	VOID, VOLATILE, WHILE, FALSE, NULL, TRUE
+	VOID, VOLATILE, WHILE, FALSE, NULL, TRUE;
+
+	public boolean isPrimitiveType() {
+		return equals(BOOLEAN) || equals(BYTE) || equals(CHAR)
+				|| equals(DOUBLE) || equals(FLOAT) || equals(INT)
+				|| equals(LONG) || equals(SHORT);
+	}
+
+	public boolean isJavaKeyword(final String string) {
+		if (StringUtils.isNotEmpty(string)) {
+			return valueOf(string.toUpperCase()) != null;
+		}
+		return false;
+	}
 
 }
