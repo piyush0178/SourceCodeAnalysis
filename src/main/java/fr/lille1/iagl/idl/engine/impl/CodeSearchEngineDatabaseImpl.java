@@ -10,18 +10,20 @@ import javax.xml.xquery.XQException;
 import javax.xml.xquery.XQPreparedExpression;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jcs.JCS;
+import org.apache.jcs.access.exception.CacheException;
 
 import fr.lille1.iagl.idl.bean.Field;
 import fr.lille1.iagl.idl.bean.Location;
 import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.PrimitiveType;
 import fr.lille1.iagl.idl.bean.Type;
+import fr.lille1.iagl.idl.bean.UnknowType;
 import fr.lille1.iagl.idl.constantes.JavaKeyword;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.engine.parser.QueryAnswerParser;
 import fr.lille1.iagl.idl.engine.queries.Queries;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
-import fr.lille1.iagl.idl.utils.PrimitiveTypesCache;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
@@ -40,12 +42,24 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	 */
 	private final QueryAnswerParser parser;
 
+	/**
+	 * cache de résultat des queries
+	 */
+	public static JCS cache;
+
 	public CodeSearchEngineDatabaseImpl(final XQConnection connection,
 			final String filePath) {
 		this.connection = connection;
 		this.filePath = filePath;
 		findTypeXQPreparedExpression = null;
 		parser = new QueryAnswerParser(this);
+		try {
+			cache = JCS.getInstance("default");
+		} catch (final CacheException e) {
+			throw new RuntimeException(
+					"Probléme lors l'instanciation du cache : "
+							+ e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -53,16 +67,19 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 		if (!isTypeNameValid(typeName)) {
 			return null;
 		}
-		if (JavaKeyword.getPrimitiveType(typeName) != null) {
-			PrimitiveType primitiveTypeCached = PrimitiveTypesCache.cache
-					.get(typeName);
-			if (primitiveTypeCached == null) {
-				primitiveTypeCached = new PrimitiveType(typeName);
-				PrimitiveTypesCache.cache.put(typeName, primitiveTypeCached);
-			}
-			return primitiveTypeCached;
+		final Type typeCached = (Type) cache.get(typeName);
+		if (typeCached != null) {
+			return typeCached;
 		}
 		try {
+			// Gestion des types primitifs
+			if (JavaKeyword.getPrimitiveType(typeName) != null) {
+				final PrimitiveType primitiveTypeCached = new PrimitiveType(
+						typeName);
+				cache.put(typeName, primitiveTypeCached);
+				return primitiveTypeCached;
+			}
+
 			// FIXME : Pour l'instant dans la requète je ne gére que les class,
 			// enum, interface et les primitives. Il manque les exceptions et
 			// annotations.
@@ -84,16 +101,19 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 			if (isResultEmpty(findTypeXQPreparedExpression.executeQuery()
 					.getSequenceAsStream())) {
-				// FIXME : Trouver quoi faire dans ce cas la. Doit-on le gérer
-				// ou doit-on lancer une erreur ? Pour l'instant je throw une
-				// RuntimeException, ça nous aidera peut être à trouver les cas
-				// à gérer.
-				throw new RuntimeException(
-						"Ce cas ne devrait pas arriver. Si il arrive c'est que nous devons le gérer. TypeName : "
-								+ typeName);
+				// TODO JIV : supprimer
+				System.out.println("unknow type : " + typeName);
+
+				final Type unknowType = new UnknowType(typeName);
+				cache.put(typeName, unknowType);
+				return unknowType;
+
 			} else {
-				return parser.parseFindTypeResults(findTypeXQPreparedExpression
-						.executeQuery().getSequenceAsStream(), typeName);
+				final Type typeResult = parser.parseFindTypeResults(
+						findTypeXQPreparedExpression.executeQuery()
+								.getSequenceAsStream(), typeName);
+				cache.put(typeName, typeResult);
+				return typeResult;
 			}
 
 		} catch (final XQException e) {
@@ -103,6 +123,11 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			throw new RuntimeException(
 					"Probléme lors du parsing du XML : findType(" + typeName
 							+ ") : " + e.getMessage(), e);
+		} catch (final CacheException e) {
+			throw new RuntimeException(
+					"Probléme lors de la mise en cache du type : " + typeName
+							+ ".\n Message de l'exception : " + e.getMessage(),
+					e);
 		}
 	}
 
