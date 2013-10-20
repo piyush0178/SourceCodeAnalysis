@@ -2,6 +2,7 @@ package fr.lille1.iagl.idl.constantes;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,15 +29,22 @@ public class JavaKeywordTest {
 	}
 
 	@Test
-	public void testIsPrimitiveType() throws Exception {
-		// TODO
-		throw new RuntimeException("not yet implemented");
+	public void testIsPrimitiveTypeTrue() throws Exception {
+		Assert.assertTrue(JavaKeyword.BOOLEAN.isPrimitiveType());
+		Assert.assertTrue(JavaKeyword.BYTE.isPrimitiveType());
+		Assert.assertTrue(JavaKeyword.CHAR.isPrimitiveType());
+		Assert.assertTrue(JavaKeyword.DOUBLE.isPrimitiveType());
+		Assert.assertTrue(JavaKeyword.FLOAT.isPrimitiveType());
+		Assert.assertTrue(JavaKeyword.INT.isPrimitiveType());
+		Assert.assertTrue(JavaKeyword.LONG.isPrimitiveType());
+		Assert.assertTrue(JavaKeyword.SHORT.isPrimitiveType());
 	}
 
 	@Test
-	public void testIsJavaKeyword() throws Exception {
-		// TODO
-		throw new RuntimeException("not yet implemented");
+	public void testIsPrimitiveTypeFalse() throws Exception {
+		Assert.assertFalse(JavaKeyword.FALSE.isPrimitiveType());
+		Assert.assertFalse(JavaKeyword.FOR.isPrimitiveType());
+		Assert.assertFalse(JavaKeyword.ABSTRACT.isPrimitiveType());
 	}
 
 }
