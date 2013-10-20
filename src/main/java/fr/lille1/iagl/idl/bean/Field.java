@@ -12,6 +12,8 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class Field extends Member {
 
+	private static final long serialVersionUID = 3272409787172591102L;
+
 	/**
 	 * @param declaringType
 	 * @param type

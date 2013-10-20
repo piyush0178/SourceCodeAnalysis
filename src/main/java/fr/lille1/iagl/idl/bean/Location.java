@@ -1,12 +1,16 @@
 package fr.lille1.iagl.idl.bean;
 
+import java.io.Serializable;
+
 import lombok.Data;
 
 /**
  * Location class
  */
 @Data
-public class Location {
+public class Location implements Serializable {
+
+	private static final long serialVersionUID = -484741118500783047L;
 
 	/**
 	 * A path of the file containing a code element. E.g. "./foo/Toto.java"

@@ -1,12 +1,16 @@
 package fr.lille1.iagl.idl.bean;
 
+import java.io.Serializable;
+
 import lombok.Data;
 
 /**
  * Type class
  */
 @Data
-public class Type {
+public class Type implements Serializable {
+
+	private static final long serialVersionUID = 4173121617986948633L;
 
 	private String name;
 

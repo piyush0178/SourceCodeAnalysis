@@ -14,6 +14,8 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class Method extends Member {
 
+	private static final long serialVersionUID = 2533556143370367945L;
+
 	private List<Type> parameters;
 
 	/**

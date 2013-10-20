@@ -1,12 +1,16 @@
 package fr.lille1.iagl.idl.bean;
 
+import java.io.Serializable;
+
 import lombok.Data;
 
 /**
  * Member class
  */
 @Data
-public class Member {
+public class Member implements Serializable {
+
+	private static final long serialVersionUID = 6043920135231681566L;
 
 	/**
 	 * The class that defines this method.
