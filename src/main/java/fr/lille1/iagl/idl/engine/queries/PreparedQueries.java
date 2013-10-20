@@ -36,9 +36,8 @@ public class PreparedQueries {
 		this.connection = connection;
 		this.filePath = filePath;
 		try {
-			prepareQuery(findTypePreparedQuery, Queries.findTypeQuery);
-			prepareQuery(findMethodsTakingAsParameterQuery,
-					Queries.findMethodsTakingAsParameterQuery);
+			prepareFindTypeQuery(connection, filePath);
+			prepareFindMethodsTakingAsParameterQuery(connection, filePath);
 
 		} catch (final XQException e) {
 			throw new RuntimeException(
@@ -48,18 +47,29 @@ public class PreparedQueries {
 	}
 
 	/**
-	 * TODO JIV : doc
-	 * 
-	 * @param queryToBePrepared
-	 * @return
+	 * @param connection
+	 * @param filePath
 	 * @throws XQException
 	 */
-	private void prepareQuery(XQPreparedExpression queryToBePrepared,
-			final String query) throws XQException {
-		if (queryToBePrepared == null) {
-			queryToBePrepared = connection.prepareExpression(query);
-			queryToBePrepared.bindString(new QName("file"), filePath, null);
-		}
+	private void prepareFindMethodsTakingAsParameterQuery(
+			final XQConnection connection, final String filePath)
+			throws XQException {
+		findMethodsTakingAsParameterQuery = connection
+				.prepareExpression(Queries.findMethodsTakingAsParameterQuery);
+		findMethodsTakingAsParameterQuery.bindString(new QName("file"),
+				filePath, null);
+	}
+
+	/**
+	 * @param connection
+	 * @param filePath
+	 * @throws XQException
+	 */
+	private void prepareFindTypeQuery(final XQConnection connection,
+			final String filePath) throws XQException {
+		findTypePreparedQuery = connection
+				.prepareExpression(Queries.findTypeQuery);
+		findTypePreparedQuery.bindString(new QName("file"), filePath, null);
 	}
 
 }
