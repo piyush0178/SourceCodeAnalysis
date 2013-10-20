@@ -34,7 +34,7 @@ public class CodeSearchEngineTest {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		throw new RuntimeException("not yet implemented");
+		DatabaseConnection.closeConnection();
 	}
 
 	@Before
