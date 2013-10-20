@@ -14,7 +14,7 @@ public enum JavaKeyword {
 	public boolean isPrimitiveType() {
 		return equals(BOOLEAN) || equals(BYTE) || equals(CHAR)
 				|| equals(DOUBLE) || equals(FLOAT) || equals(INT)
-				|| equals(LONG) || equals(SHORT);
+				|| equals(LONG) || equals(SHORT) || equals(VOID);
 	}
 
 }

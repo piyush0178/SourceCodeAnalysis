@@ -38,6 +38,7 @@ public class JavaKeywordTest {
 		Assert.assertTrue(JavaKeyword.INT.isPrimitiveType());
 		Assert.assertTrue(JavaKeyword.LONG.isPrimitiveType());
 		Assert.assertTrue(JavaKeyword.SHORT.isPrimitiveType());
+		Assert.assertTrue(JavaKeyword.VOID.isPrimitiveType());
 	}
 
 	@Test
