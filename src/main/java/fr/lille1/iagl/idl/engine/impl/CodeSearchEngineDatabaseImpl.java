@@ -64,7 +64,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			return null;
 		}
 		try {
-			// FIXME : Pour l'instant da la requète je ne gére que les class,
+			// FIXME : Pour l'instant dans la requète je ne gére que les class,
 			// enum et interface. Il manque les primitives, exceptions et
 			// annotations.
 			// FIXME : Je ne gére pas encore les numéros de lignes dans Location
@@ -100,7 +100,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 					+ "		else $result";
 
 			// la deuxiéme requête et toutes les suivantes seront plus rapides.
-			// FIXME : Penser à lancer une première requéte avant que le prof
+			// TODO : Penser à lancer une première requéte avant que le prof
 			// prenne la main pr gagner quelques millisecondes.
 			if (findTypeXQPreparedExpression == null) {
 				findTypeXQPreparedExpression = connection
@@ -113,20 +113,23 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			findTypeXQPreparedExpression.bindString(new QName("typeName"),
 					typeName, null);
 
-			// FIXME : vérifier que cela ne pose jamais de probléme de passé le
-			// typeName comme cela. A mon avis ça va en créer si le mec passe un
-			// name qui ne veut rien dire parce que l'on va quand mm créer
-			// l'object.
 			if (resultIsEmpty(findTypeXQPreparedExpression.executeQuery()
 					.getSequenceAsStream())) {
 
-				// FIXME : il faudra ajouter des régles supplémentaires ici. Par
-				// exemple, si le mec envoie findType('void'), il faut créer le
-				// type void et le mettre en cache ou je ne sais ou. Pour
-				// l'instant ça renvoie null;
+				// FIXME (Important) : il faudra ajouter des régles
+				// supplémentaires ici. Par exemple, si le mec envoie
+				// findType('void'), il faut créer le type void et le mettre en
+				// cache ou je ne sais ou. Pour l'instant ça renvoie null;
 
 				return null;
 			} else {
+
+				// FIXME : vérifier que cela ne pose jamais de probléme de passé
+				// le typeName comme cela. On sait déja qui si on se trouve dans
+				// cette branche de ce if c'est que ce typeName existe bien dans
+				// le fichier. 9a réduit les risques mais j'ai peut être raté qq
+				// chose.
+
 				return parseFindTypeResults(findTypeXQPreparedExpression
 						.executeQuery().getSequenceAsStream(), typeName);
 			}
