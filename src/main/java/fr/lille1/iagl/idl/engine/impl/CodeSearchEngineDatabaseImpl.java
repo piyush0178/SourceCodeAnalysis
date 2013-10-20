@@ -22,9 +22,9 @@ import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.PrimitiveType;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.constantes.JavaKeyword;
-import fr.lille1.iagl.idl.constantes.Queries;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
-import fr.lille1.iagl.idl.engine.queries.QueryAnswerParser;
+import fr.lille1.iagl.idl.engine.parser.QueryAnswerParser;
+import fr.lille1.iagl.idl.engine.queries.Queries;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
 import fr.lille1.iagl.idl.utils.PrimitiveTypesCache;
 
@@ -279,21 +279,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	public List<Type> findClassesAnnotatedWith(final String annotationName) {
 		throw new WillNeverBeImplementedMethodException(
 				"Méthode impossible à implémenter en utilisant SrcML");
-	}
-
-	/**
-	 * TODO RAL : Supprimer cette méthode et ses appels.
-	 * 
-	 * Execute la query Xquery passé en paramétre.
-	 * 
-	 * @param query
-	 * @return
-	 * @throws XQException
-	 */
-	private XQResultSequence execute(final String query) throws XQException {
-		XQPreparedExpression xqpe;
-		xqpe = connection.prepareExpression(query);
-		return xqpe.executeQuery();
 	}
 
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.lille1.iagl.idl.constantes;
+package fr.lille1.iagl.idl.engine.queries;
 
 /**
  * Queries
