@@ -57,8 +57,7 @@ public class QueryAnswerParser {
 			if (eventType == XMLStreamReader.END_ELEMENT
 					&& TYPE.equals(xmlReader.getLocalName())) {
 				return typeRes;
-			}
-			if (eventType == XMLStreamReader.START_ELEMENT) {
+			} else if (eventType == XMLStreamReader.START_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
 				case LOCATION:
 					typeRes.setDeclaration(parseLocation(xmlReader));
@@ -93,8 +92,7 @@ public class QueryAnswerParser {
 			if (eventType == XMLStreamReader.END_ELEMENT
 					&& LOCATION.equals(xmlReader.getLocalName())) {
 				return location;
-			}
-			if (eventType == XMLStreamReader.START_ELEMENT) {
+			} else if (eventType == XMLStreamReader.START_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
 				case PATH:
 					location.setFilePath(xmlReader.getElementText());
@@ -126,17 +124,17 @@ public class QueryAnswerParser {
 				switch (xmlReader.getLocalName()) {
 				case FUNCTION:
 					methodList.add(method);
+					break;
 				case FUNCTION_LIST:
 					return methodList;
 				}
-			}
-			if (eventType == XMLStreamReader.START_ELEMENT) {
+			} else if (eventType == XMLStreamReader.START_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
 				case FUNCTION:
 					method = new Method();
 					break;
 				case CLASS:
-					method.setDeclaringType(searchEngine.findType(xmlReader
+					method.setType(searchEngine.findType(xmlReader
 							.getElementText()));
 					break;
 				case TYPE_NAME:
@@ -170,8 +168,7 @@ public class QueryAnswerParser {
 			if (eventType == XMLStreamReader.END_ELEMENT
 					&& PARAMETER_LIST.equals(xmlReader.getLocalName())) {
 				return paramList;
-			}
-			if (eventType == XMLStreamReader.START_ELEMENT
+			} else if (eventType == XMLStreamReader.START_ELEMENT
 					&& TYPE.equals(xmlReader.getLocalName())) {
 				paramList
 						.add(searchEngine.findType(xmlReader.getElementText()));
