@@ -3,7 +3,6 @@
  */
 package fr.lille1.iagl.idl.constantes;
 
-
 /**
  * Java reserved keywords
  */
@@ -14,10 +13,6 @@ public enum JavaKeyword {
 	NATIVE, NEW, PACKAGE, PRIVATE, PROTECTED, PUBLIC, RETURN, SHORT, STATIC,
 	STRICTFP, SUPER, SWITCH, SYNCHRONIZED, THIS, THROW, THROWS, TRANSIENT, TRY,
 	VOID, VOLATILE, WHILE, FALSE, NULL, TRUE;
-
-	JavaKeyword() {
-		// empty constructor.
-	}
 
 	public boolean isPrimitiveType() {
 		return equals(BOOLEAN) || equals(BYTE) || equals(CHAR)
