@@ -40,7 +40,7 @@ public class Queries {
 	public static final String findMethodsTakingAsParameterQuery = "declare variable $file as xs:string external;"
 			+ " declare variable $typeName as xs:string external;"
 			+ " let $functions := "
-			+ "		for $class in //class[//function/parameter_list/param/decl/type/name = $typeName]"
+			+ "		for $class in doc($file)//class[//function/parameter_list/param/decl/type/name = $typeName]"
 			+ "		for $function in $class//function[parameter_list/param/decl/type/name = $typeName]"
 			+ " 	return"
 			+ " 	<function>"
