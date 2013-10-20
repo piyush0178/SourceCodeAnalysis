@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<type>
+	<location>
+		<path>java/io/ObjectInputStream.java</path>
+		<line_number />
+	</location>
+	<package>java.io</package>
+	<kind>class</kind>
+</type>
