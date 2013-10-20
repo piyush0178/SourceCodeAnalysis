@@ -8,13 +8,8 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.xquery.XQConnection;
 import javax.xml.xquery.XQException;
 import javax.xml.xquery.XQPreparedExpression;
-import javax.xml.xquery.XQResultSequence;
 
 import org.apache.commons.lang3.StringUtils;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import fr.lille1.iagl.idl.bean.Field;
 import fr.lille1.iagl.idl.bean.Location;
@@ -149,17 +144,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Field> findFieldsTypedWith(final String typeName) {
 		// TODO Auto-generated method stub
-		try {
-			final String query = "doc('" + filePath
-					+ "')//unit/unit/class[name='" + typeName
-					+ "']/block/decl_stmt/decl";
-			final XQResultSequence results = execute(query);
-
-			final XMLReader saxReader = XMLReaderFactory.createXMLReader();
-			saxReader.setContentHandler(new DefaultHandler());
-		} catch (XQException | SAXException e) {
-			throw new RuntimeException(e);
-		}
+		final String query = "doc('" + filePath + "')//unit/unit/class[name='"
+				+ typeName + "']/block/decl_stmt/decl";
 
 		return null;
 	}
@@ -194,22 +180,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	@Override
 	public List<Method> findMethodsTakingAsParameter(final String typeName) {
-		// TODO JIV : ecrire Junit
-		// FIXME JIV : il peut y avoir plusieurs "specifier"
-		/*
-		 * ex : //unit[enum]
-		 * 
-		 * <specifier>private</specifier> <specifier>static</specifier>
-		 */
-		// FIXME JIV : il peut y avoir plusieurs "type_name"
-		/*
-		 * ex : //unit[enum]
-		 * 
-		 * <name>native</name> <name>void</name>
-		 */
-		// FIXME JIV : il y a des déclarations de fonctions dans les interfaces
-		// et les classes abstraitres : <function_decl>
-		/* ex : //unit[enum] */
 		try {
 
 			final XQPreparedExpression preparedQuery = connection
