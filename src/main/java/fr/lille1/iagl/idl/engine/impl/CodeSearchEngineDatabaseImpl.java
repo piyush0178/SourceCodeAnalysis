@@ -22,7 +22,7 @@ import fr.lille1.iagl.idl.bean.UnknowType;
 import fr.lille1.iagl.idl.constantes.JavaKeyword;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.engine.parser.QueryAnswerParser;
-import fr.lille1.iagl.idl.engine.queries.Queries;
+import fr.lille1.iagl.idl.engine.queries.PreparedQueries;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
@@ -32,15 +32,11 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	private final String filePath;
 
 	/**
-	 * Prepared query of the fyndType method.<br>
-	 * We keep it here for performances. This query will be very offen use.
-	 */
-	private XQPreparedExpression findTypeXQPreparedExpression;
-
-	/**
 	 * Object that provides parser for query answers
 	 */
 	private final QueryAnswerParser parser;
+
+	private final PreparedQueries preparedQueries;
 
 	/**
 	 * cache de résultat des queries
@@ -51,8 +47,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			final String filePath) {
 		this.connection = connection;
 		this.filePath = filePath;
-		findTypeXQPreparedExpression = null;
 		parser = new QueryAnswerParser(this);
+		preparedQueries = new PreparedQueries(connection, filePath);
 		try {
 			cache = JCS.getInstance("default");
 		} catch (final CacheException e) {
@@ -84,34 +80,21 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			// enum, interface et les primitives. Il manque les exceptions et
 			// annotations.
 			// FIXME : Je ne gére pas encore les numéros de lignes dans Location
-			if (findTypeXQPreparedExpression == null) {
-				// TODO : Penser à lancer une première requéte avant que le prof
-				// prenne la main pr gagner quelques millisecondes.
-				// la deuxiéme requête et toutes les suivantes seront plus
-				// rapides.
-				findTypeXQPreparedExpression = connection
-						.prepareExpression(Queries.findTypeQuery);
-				// on peut ne le binder que la première fois :)
-				findTypeXQPreparedExpression.bindString(new QName("file"),
-						filePath, null);
-			}
 
-			findTypeXQPreparedExpression.bindString(new QName("typeName"),
-					typeName, null);
+			final XQPreparedExpression findTypePreparedQuery = preparedQueries
+					.getFindTypePreparedQuery();
+			findTypePreparedQuery.bindString(new QName("typeName"), typeName,
+					null);
+			final XMLStreamReader xmlReader = findTypePreparedQuery
+					.executeQuery().getSequenceAsStream();
 
-			if (isResultEmpty(findTypeXQPreparedExpression.executeQuery()
-					.getSequenceAsStream())) {
-				// TODO JIV : supprimer
-				System.out.println("unknow type : " + typeName);
-
+			if (isResultEmpty(xmlReader)) {
 				final Type unknowType = new UnknowType(typeName);
 				cache.put(typeName, unknowType);
 				return unknowType;
-
 			} else {
-				final Type typeResult = parser.parseFindTypeResults(
-						findTypeXQPreparedExpression.executeQuery()
-								.getSequenceAsStream(), typeName);
+				final Type typeResult = parser.parseFindTypeResults(xmlReader,
+						typeName);
 				cache.put(typeName, typeResult);
 				return typeResult;
 			}
@@ -206,11 +189,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Method> findMethodsTakingAsParameter(final String typeName) {
 		try {
-
-			final XQPreparedExpression preparedQuery = connection
-					.prepareExpression(Queries.findMethodsTakingAsParameterQuery);
-
-			preparedQuery.bindString(new QName("file"), filePath, null);
+			final XQPreparedExpression preparedQuery = preparedQueries
+					.getFindMethodsTakingAsParameterQuery();
 			preparedQuery.bindString(new QName("typeName"), typeName, null);
 
 			return parser.parseFunctionToMethod(preparedQuery.executeQuery()
