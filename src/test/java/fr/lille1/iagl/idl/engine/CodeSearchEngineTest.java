@@ -3,6 +3,8 @@
  */
 package fr.lille1.iagl.idl.engine;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -12,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.engine.impl.CodeSearchEngineDatabaseImpl;
@@ -105,7 +108,9 @@ public class CodeSearchEngineTest {
 
 	@Test
 	public void testFindMethodsTakingAsParameter() throws Exception {
-		throw new RuntimeException("not yet implemented");
+		final List<Method> methods = engine
+				.findMethodsTakingAsParameter("ObjectInputStream");
+		Assert.assertEquals(26, methods.size());
 	}
 
 	@Test
