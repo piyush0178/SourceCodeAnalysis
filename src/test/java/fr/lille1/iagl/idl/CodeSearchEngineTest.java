@@ -3,9 +3,18 @@
  */
 package fr.lille1.iagl.idl;
 
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import fr.lille1.iagl.idl.bean.Type;
+import fr.lille1.iagl.idl.constantes.Constantes;
+import fr.lille1.iagl.idl.engine.CodeSearchEngine;
+import fr.lille1.iagl.idl.engine.impl.CodeSearchEngineDatabaseImpl;
+import fr.lille1.iagl.idl.utils.DatabaseConnection;
 
 /**
  * @author ivanic
@@ -14,9 +23,41 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class CodeSearchEngineTest {
 
+	static CodeSearchEngine engine;
+
+	@BeforeClass
+	public static void initializeTests() {
+		engine = new CodeSearchEngineDatabaseImpl(
+				DatabaseConnection.getConnection(), Constantes.JAVA_XML);
+	}
+
+	@AfterClass
+	public static void fisnishTests() {
+		DatabaseConnection.closeConnection();
+	}
+
 	@Test
 	public void testFindType() throws Exception {
 		throw new RuntimeException("not yet implemented");
+	}
+
+	/**
+	 * Je fait deux appels consécutifs. Le bind de "file" dans la requête n'est
+	 * fait qu'une fois et ça ne plante pas.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testFindTypeBindOnlyOneTimeFilePath() throws Exception {
+		engine.findType("ObjectInputStream");
+		engine.findType("String");
+	}
+
+	@Test
+	public void testFindTypeWithJavaKeyword() throws Exception {
+		final Type type = engine.findType("void");
+		Assert.assertNotNull(type);
+		Assert.assertEquals("void", type.getName());
 	}
 
 	@Test
