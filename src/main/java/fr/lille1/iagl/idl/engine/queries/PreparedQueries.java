@@ -38,7 +38,7 @@ public class PreparedQueries {
 		try {
 			prepareQuery(findTypePreparedQuery, Queries.findTypeQuery);
 			prepareQuery(findMethodsTakingAsParameterQuery,
-					Queries.findTypeQuery);
+					Queries.findMethodsTakingAsParameterQuery);
 
 		} catch (final XQException e) {
 			throw new RuntimeException(
