@@ -1,6 +1,5 @@
 package fr.lille1.iagl.idl.engine.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -22,26 +21,13 @@ import fr.lille1.iagl.idl.bean.Location;
 import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.PrimitiveType;
 import fr.lille1.iagl.idl.bean.Type;
-import fr.lille1.iagl.idl.bean.TypeKind;
 import fr.lille1.iagl.idl.constantes.JavaKeyword;
+import fr.lille1.iagl.idl.constantes.Queries;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
+import fr.lille1.iagl.idl.utils.QueryAnswerParser;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
-
-	private static final String PATH = "path";
-	private static final String KIND = "kind";
-	private static final String TYPE = "type";
-	private static final String ERROR = "error";
-	private static final String PACKAGE = "package";
-	private static final String LOCATION = "location";
-	private static final String FUNCTION = "function";
-	private static final String SPECIFIER = "specifier";
-	private static final String TYPE_NAME = "type_name";
-	private static final String LINE_NUMBER = "line_number";
-	private static final String METHOD_NAME = "method_name";
-	private static final String FUNCTION_LIST = "function_list";
-	private static final String PARAMETER_LIST = "parameter_list";
 
 	private final XQConnection connection;
 
@@ -53,11 +39,17 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	 */
 	private XQPreparedExpression findTypeXQPreparedExpression;
 
+	/**
+	 * Object that provides parser for query answers
+	 */
+	private final QueryAnswerParser parser;
+
 	public CodeSearchEngineDatabaseImpl(final XQConnection connection,
 			final String filePath) {
 		this.connection = connection;
 		this.filePath = filePath;
 		findTypeXQPreparedExpression = null;
+		parser = new QueryAnswerParser(this);
 	}
 
 	@Override
@@ -67,47 +59,16 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 		}
 		try {
 			// FIXME : Pour l'instant dans la requète je ne gére que les class,
-			// enum et interface. Il manque les primitives, exceptions et
+			// enum, interface et les primitives. Il manque les exceptions et
 			// annotations.
 			// FIXME : Je ne gére pas encore les numéros de lignes dans Location
-
-			// la deuxiéme requête et toutes les suivantes seront plus
-			// rapides.
 			if (findTypeXQPreparedExpression == null) {
-
-				final String query = "declare variable $file as xs:string external;"
-						+ " declare variable $typeName as xs:string external;"
-						+ "	let $result :="
-						+ " 	for $unit in doc($file)//unit[class/name=$typeName]"
-						+ " 	return"
-						+ "		<type>"
-						+ "			<location>"
-						+ "				<path>{data($unit/@filename)}</path>"
-						+ "				<line_number></line_number>"
-						+ "			</location>"
-						+ "			<package>"
-						+ "			{"
-						+ "				(: petite bidouille pr enlever 'package' et ';' de la déclaration du package :)"
-						+ "				substring-before(substring-after(data($unit/package),'package'), ';')"
-						+ "			}"
-						+ "			</package>"
-						+ "			<kind>"
-						+ "			{ "
-						+ "				if($unit/class) then 'class' "
-						+ "				else if($unit/enum) then 'enum'"
-						+ "				else if($unit/interface) then 'interface'"
-						+ "				else ''"
-						+ "			}"
-						+ "			</kind>"
-						+ "		</type>"
-						+ "	return"
-						+ "		if(count($result) eq 0) then <error>The query returned nothing</error>"
-						+ "		else $result";
-
 				// TODO : Penser à lancer une première requéte avant que le prof
 				// prenne la main pr gagner quelques millisecondes.
+				// la deuxiéme requête et toutes les suivantes seront plus
+				// rapides.
 				findTypeXQPreparedExpression = connection
-						.prepareExpression(query);
+						.prepareExpression(Queries.findTypeQuery);
 				// on peut ne le binder que la première fois :)
 				findTypeXQPreparedExpression.bindString(new QName("file"),
 						filePath, null);
@@ -116,7 +77,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			findTypeXQPreparedExpression.bindString(new QName("typeName"),
 					typeName, null);
 
-			if (resultIsEmpty(findTypeXQPreparedExpression.executeQuery()
+			if (isResultEmpty(findTypeXQPreparedExpression.executeQuery()
 					.getSequenceAsStream())) {
 				return manageEmptyResult(typeName);
 			} else {
@@ -127,7 +88,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 				// le fichier. 9a réduit les risques mais j'ai peut être raté qq
 				// chose.
 
-				return parseFindTypeResults(findTypeXQPreparedExpression
+				return parser.parseFindTypeResults(findTypeXQPreparedExpression
 						.executeQuery().getSequenceAsStream(), typeName);
 			}
 
@@ -148,16 +109,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	 * @return
 	 */
 	private Type manageEmptyResult(final String typeName) {
-		if (typeName == null || StringUtils.isEmpty(typeName)) {
-			// FIXME : Trouver quoi faire dans ce cas la. Doit-on le gérer ou
-			// doit-on lancer une erreur ? Pour l'instant je throw une
-			// RuntimeException, ça nous aidera peut être à trouver les cas à
-			// gérer.
-			throw new RuntimeException(
-					"Ce cas ne devrait pas arriver. Si il arrive c'est que nous devons le gérer. TypeName : "
-							+ typeName);
-		}
-		final JavaKeyword keyword = JavaKeyword.valueOf(typeName);
+		final JavaKeyword keyword = JavaKeyword.valueOf(typeName.toUpperCase());
 		if (keyword != null && keyword.isPrimitiveType()) {
 			return new PrimitiveType(typeName);
 		} else {
@@ -178,13 +130,13 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	 * @return
 	 * @throws XMLStreamException
 	 */
-	private boolean resultIsEmpty(final XMLStreamReader xmlReader)
+	private boolean isResultEmpty(final XMLStreamReader xmlReader)
 			throws XMLStreamException {
 		while (xmlReader.hasNext()) {
 			xmlReader.next();
 			final int eventType = xmlReader.getEventType();
 			if (eventType == XMLStreamReader.START_ELEMENT) {
-				return ERROR.equals(xmlReader.getLocalName());
+				return QueryAnswerParser.ERROR.equals(xmlReader.getLocalName());
 			}
 		}
 		throw new RuntimeException("This case will never append");
@@ -198,75 +150,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	 */
 	private boolean typeNameIsValid(final String typeName) {
 		return StringUtils.isNotEmpty(typeName);
-	}
-
-	/**
-	 * TODO JIV : documentation
-	 * 
-	 * @param sequenceAsStream
-	 * @return
-	 * @throws XMLStreamException
-	 */
-	private Type parseFindTypeResults(final XMLStreamReader xmlReader,
-			final String typeName) throws XMLStreamException {
-		final Type typeRes = new Type();
-		typeRes.setName(typeName);
-		while (xmlReader.hasNext()) {
-			xmlReader.next();
-			final int eventType = xmlReader.getEventType();
-			if (eventType == XMLStreamReader.END_ELEMENT
-					&& TYPE.equals(xmlReader.getLocalName())) {
-				return typeRes;
-			}
-			if (eventType == XMLStreamReader.START_ELEMENT) {
-				switch (xmlReader.getLocalName()) {
-				case LOCATION:
-					typeRes.setDeclaration(parseLocation(xmlReader));
-					break;
-				case PACKAGE:
-					typeRes.setFullyQualifiedPackageName(xmlReader
-							.getElementText());
-					break;
-				case KIND:
-					typeRes.setKind(TypeKind.valueOf(xmlReader.getElementText()
-							.toUpperCase()));
-					break;
-				}
-			}
-		}
-		throw new RuntimeException("This case will never append");
-	}
-
-	/**
-	 * TODO JIV : documentation
-	 * 
-	 * @param xmlReader
-	 * @return
-	 * @throws XMLStreamException
-	 */
-	private Location parseLocation(final XMLStreamReader xmlReader)
-			throws XMLStreamException {
-		final Location location = new Location();
-		while (xmlReader.hasNext()) {
-			xmlReader.next();
-			final int eventType = xmlReader.getEventType();
-			if (eventType == XMLStreamReader.END_ELEMENT
-					&& LOCATION.equals(xmlReader.getLocalName())) {
-				return location;
-			}
-			if (eventType == XMLStreamReader.START_ELEMENT) {
-				switch (xmlReader.getLocalName()) {
-				case PATH:
-					location.setFilePath(xmlReader.getElementText());
-					break;
-				case LINE_NUMBER:
-					// FIXME : pas encore géré ! (comme dans la requête
-					// d'ailleurs)
-					break;
-				}
-			}
-		}
-		throw new RuntimeException("This case will never append");
 	}
 
 	@Override
@@ -340,35 +223,14 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 		// et les classes abstraitres : <function_decl>
 		/* ex : //unit[enum] */
 		try {
-			final String query = "declare variable $file as xs:string external;"
-					+ " declare variable $typeName as xs:string external;"
-					+ " let $functions := "
-					+ "		for $function in doc($file)//unit/unit/function[parameter_list/param/decl/type/name = $typeName]"
-					+ " 	return"
-					+ " 	<function>"
-					+ "			<specifier>{$function/type/specifier/text()}</specifier>"
-					+ "			<type_name>{$function/type/name/text()}</type_name>"
-					+ "			<method_name>{$function/name/text()}</method_name>"
-					+ " 		<parameter_list>"
-					+ "			{"
-					+ "				for $param in $function/parameter_list/param"
-					+ "				return"
-					+ "				<param>"
-					+ "					<type>{$param/decl/type/name/text()}</type>"
-					+ "				</param>"
-					+ "			}"
-					+ "			</parameter_list>"
-					+ "		</function>"
-					+ " return"
-					+ "	<function_list>{$functions}</function_list>";
 
 			final XQPreparedExpression preparedQuery = connection
-					.prepareExpression(query);
+					.prepareExpression(Queries.findMethodsTakingAsParameterQuery);
 
 			preparedQuery.bindString(new QName("file"), filePath, null);
 			preparedQuery.bindString(new QName("typeName"), typeName, null);
 
-			return parseFunctionToMethod(preparedQuery.executeQuery()
+			return parser.parseFunctionToMethod(preparedQuery.executeQuery()
 					.getSequenceAsStream());
 
 		} catch (final XQException e) {
@@ -380,74 +242,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 					"Probléme lors du parsing du XML : findMethodsTakingAsParameter("
 							+ typeName + ") : " + e.getMessage(), e);
 		}
-	}
-
-	/**
-	 * TODO JIV : documentation
-	 * 
-	 * @param xmlReader
-	 * @throws XMLStreamException
-	 */
-	private List<Method> parseFunctionToMethod(final XMLStreamReader xmlReader)
-			throws XMLStreamException {
-		final List<Method> methodList = new ArrayList<Method>();
-		Method method = null;
-		while (xmlReader.hasNext()) {
-			xmlReader.next();
-			final int eventType = xmlReader.getEventType();
-			if (eventType == XMLStreamReader.END_ELEMENT) {
-				switch (xmlReader.getLocalName()) {
-				case FUNCTION:
-					methodList.add(method);
-				case FUNCTION_LIST:
-					return methodList;
-				}
-			}
-			if (eventType == XMLStreamReader.START_ELEMENT) {
-				switch (xmlReader.getLocalName()) {
-				case FUNCTION:
-					method = new Method();
-					break;
-				case SPECIFIER:
-					method.setDeclaringType(findType(xmlReader.getElementText()));
-					break;
-				case TYPE_NAME:
-					method.setDeclaringType(findType(xmlReader.getElementText()));
-					break;
-				case METHOD_NAME:
-					method.setName(xmlReader.getElementText());
-					break;
-				case PARAMETER_LIST:
-					method.setParameters(parseFunctionParameterList(xmlReader));
-					break;
-				}
-			}
-		}
-		throw new RuntimeException("This case will never append");
-	}
-
-	/**
-	 * TODO JIV : documentation
-	 * 
-	 * @param xmlReader
-	 * @throws XMLStreamException
-	 */
-	private List<Type> parseFunctionParameterList(
-			final XMLStreamReader xmlReader) throws XMLStreamException {
-		final List<Type> paramList = new ArrayList<Type>();
-		while (xmlReader.hasNext()) {
-			xmlReader.next();
-			final int eventType = xmlReader.getEventType();
-			if (eventType == XMLStreamReader.END_ELEMENT
-					&& PARAMETER_LIST.equals(xmlReader.getLocalName())) {
-				return paramList;
-			}
-			if (eventType == XMLStreamReader.START_ELEMENT
-					&& TYPE.equals(xmlReader.getLocalName())) {
-				paramList.add(findType(xmlReader.getElementText()));
-			}
-		}
-		throw new RuntimeException("This case will never append");
 	}
 
 	@Override
@@ -500,6 +294,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	}
 
 	/**
+	 * TODO RAL : Supprimer cette méthode et ses appels.
+	 * 
 	 * Execute la query Xquery passé en paramétre.
 	 * 
 	 * @param query
