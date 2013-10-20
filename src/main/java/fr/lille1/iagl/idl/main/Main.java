@@ -28,7 +28,7 @@ public class Main {
 
 		start = System.currentTimeMillis();
 		final List<Method> methods = engine
-				.findMethodsTakingAsParameter("String");
+				.findMethodsTakingAsParameter("ObjectInputStream");
 		// final Type type = engine.findType("void");
 		// final Type type = engine.findType("ObjectInputStream");
 		end = System.currentTimeMillis();
