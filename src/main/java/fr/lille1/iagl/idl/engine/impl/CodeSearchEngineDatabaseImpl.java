@@ -25,6 +25,7 @@ import fr.lille1.iagl.idl.constantes.JavaKeyword;
 import fr.lille1.iagl.idl.constantes.Queries;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
+import fr.lille1.iagl.idl.utils.PrimitiveTypesCache;
 import fr.lille1.iagl.idl.utils.QueryAnswerParser;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
@@ -54,7 +55,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	@Override
 	public Type findType(final String typeName) {
-		if (!typeNameIsValid(typeName)) {
+		if (!isTypeNameValid(typeName)) {
 			return null;
 		}
 		try {
@@ -111,7 +112,13 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	private Type manageEmptyResult(final String typeName) {
 		final JavaKeyword keyword = JavaKeyword.valueOf(typeName.toUpperCase());
 		if (keyword != null && keyword.isPrimitiveType()) {
-			return new PrimitiveType(typeName);
+			PrimitiveType primitiveTypeCached = PrimitiveTypesCache.cache
+					.get(typeName);
+			if (primitiveTypeCached == null) {
+				primitiveTypeCached = new PrimitiveType(typeName);
+				PrimitiveTypesCache.cache.put(typeName, primitiveTypeCached);
+			}
+			return primitiveTypeCached;
 		} else {
 			// FIXME : Trouver quoi faire dans ce cas la. Doit-on le gérer ou
 			// doit-on lancer une erreur ? Pour l'instant je throw une
@@ -148,7 +155,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	 * @param typeName
 	 * @return
 	 */
-	private boolean typeNameIsValid(final String typeName) {
+	private boolean isTypeNameValid(final String typeName) {
 		return StringUtils.isNotEmpty(typeName);
 	}
 
