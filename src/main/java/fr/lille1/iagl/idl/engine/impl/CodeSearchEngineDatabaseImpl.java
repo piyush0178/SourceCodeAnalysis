@@ -11,6 +11,7 @@ import javax.xml.xquery.XQException;
 import javax.xml.xquery.XQPreparedExpression;
 import javax.xml.xquery.XQResultSequence;
 
+import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
@@ -20,48 +21,222 @@ import fr.lille1.iagl.idl.bean.Field;
 import fr.lille1.iagl.idl.bean.Location;
 import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.Type;
+import fr.lille1.iagl.idl.bean.TypeKind;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
-	private static final String FUNCTION_LIST = "function_list";
+	private static final String PATH = "path";
+	private static final String KIND = "kind";
 	private static final String TYPE = "type";
-	private static final String PARAM = "param";
+	private static final String ERROR = "error";
+	private static final String PACKAGE = "package";
+	private static final String LOCATION = "location";
 	private static final String FUNCTION = "function";
 	private static final String SPECIFIER = "specifier";
 	private static final String TYPE_NAME = "type_name";
+	private static final String LINE_NUMBER = "line_number";
 	private static final String METHOD_NAME = "method_name";
+	private static final String FUNCTION_LIST = "function_list";
 	private static final String PARAMETER_LIST = "parameter_list";
 
 	private final XQConnection connection;
 
 	private final String filePath;
 
+	/**
+	 * Prepared query of the fyndType method.<br>
+	 * We keep it here for performances. This query will be very offen use.
+	 */
+	private XQPreparedExpression findTypeXQPreparedExpression;
+
 	public CodeSearchEngineDatabaseImpl(final XQConnection connection,
 			final String filePath) {
 		this.connection = connection;
 		this.filePath = filePath;
+		findTypeXQPreparedExpression = null;
 	}
 
 	@Override
 	public Type findType(final String typeName) {
-		final Type type = new Type();
-		try {
-
-			final String query = "for $x in doc('" + filePath
-					+ "')//unit[class/name='" + typeName + "'] return $x";
-
-			final XQResultSequence results = execute(query);
-
-			while (results.next()) {
-				final String res = results.getItemAsString(null);
-			}
-		} catch (final XQException e) {
-			throw new RuntimeException("fyndType(" + typeName + ") FAIL :"
-					+ e.getMessage(), e);
+		if (!typeNameIsValid(typeName)) {
+			return null;
 		}
-		return type;
+		try {
+			// FIXME : Pour l'instant da la requète je ne gére que les class,
+			// enum et interface. Il manque les primitives, exceptions et
+			// annotations.
+			// FIXME : Je ne gére pas encore les numéros de lignes dans Location
+			final String query = "declare variable $file as xs:string external;"
+					+ " declare variable $typeName as xs:string external;"
+					+ "	let $result :="
+					+ " 	for $unit in doc($file)//unit[class/name=$typeName]"
+					+ " 	return"
+					+ "		<type>"
+					+ "			<location>"
+					+ "				<path>{data($unit/@filename)}</path>"
+					+ "				<line_number></line_number>"
+					+ "			</location>"
+					+ "			<package>"
+					+ "			{"
+					+ "				(: petite bidouille pr enlever 'package' et ';' de la déclaration du package :)"
+					+ "				substring-before(substring-after(data($unit/package),'package'), ';')"
+					+ "			}"
+					+ "			</package>"
+					+ "			<kind>"
+					+ "			{ "
+					+ "				let $kind :="
+					+ "					if($unit/class) then 'class' "
+					+ "					else if($unit/enum) then 'enum'"
+					+ "					else if($unit/interface) then 'interface'"
+					+ "					else ''"
+					+ "				return $kind"
+					+ "			}"
+					+ "			</kind>"
+					+ "		</type>"
+					+ "	return"
+					+ "		if(count($result) eq 0) then <error>The query returned nothing</error>"
+					+ "		else $result";
+
+			// la deuxiéme requête et toutes les suivantes seront plus rapides.
+			// FIXME : Penser à lancer une première requéte avant que le prof
+			// prenne la main pr gagner quelques millisecondes.
+			if (findTypeXQPreparedExpression == null) {
+				findTypeXQPreparedExpression = connection
+						.prepareExpression(query);
+				// on peut ne le binder que la première fois :)
+				findTypeXQPreparedExpression.bindString(new QName("file"),
+						filePath, null);
+			}
+
+			findTypeXQPreparedExpression.bindString(new QName("typeName"),
+					typeName, null);
+
+			// FIXME : vérifier que cela ne pose jamais de probléme de passé le
+			// typeName comme cela. A mon avis ça va en créer si le mec passe un
+			// name qui ne veut rien dire parce que l'on va quand mm créer
+			// l'object.
+			if (resultIsEmpty(findTypeXQPreparedExpression.executeQuery()
+					.getSequenceAsStream())) {
+
+				// FIXME : il faudra ajouter des régles supplémentaires ici. Par
+				// exemple, si le mec envoie findType('void'), il faut créer le
+				// type void et le mettre en cache ou je ne sais ou. Pour
+				// l'instant ça renvoie null;
+
+				return null;
+			} else {
+				return parseFindTypeResults(findTypeXQPreparedExpression
+						.executeQuery().getSequenceAsStream(), typeName);
+			}
+
+		} catch (final XQException e) {
+			throw new RuntimeException("fyndType(" + typeName + ") FAIL : "
+					+ e.getMessage(), e);
+		} catch (final XMLStreamException e) {
+			throw new RuntimeException(
+					"Probléme lors du parsing du XML : findType(" + typeName
+							+ ") : " + e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * Return true if the query result passed in parameter is empty.
+	 * 
+	 * @param sequenceAsStream
+	 * @return
+	 * @throws XMLStreamException
+	 */
+	private boolean resultIsEmpty(final XMLStreamReader xmlReader)
+			throws XMLStreamException {
+		while (xmlReader.hasNext()) {
+			xmlReader.next();
+			final int eventType = xmlReader.getEventType();
+			if (eventType == XMLStreamReader.START_ELEMENT) {
+				return ERROR.equals(xmlReader.getLocalName());
+			}
+		}
+		throw new RuntimeException("This case will never append");
+	}
+
+	/**
+	 * Return true if the typeName is correct according to our rules.
+	 * 
+	 * @param typeName
+	 * @return
+	 */
+	private boolean typeNameIsValid(final String typeName) {
+		return StringUtils.isNotEmpty(typeName);
+	}
+
+	/**
+	 * TODO JIV : documentation
+	 * 
+	 * @param sequenceAsStream
+	 * @return
+	 * @throws XMLStreamException
+	 */
+	private Type parseFindTypeResults(final XMLStreamReader xmlReader,
+			final String typeName) throws XMLStreamException {
+		final Type typeRes = new Type();
+		typeRes.setName(typeName);
+		while (xmlReader.hasNext()) {
+			xmlReader.next();
+			final int eventType = xmlReader.getEventType();
+			if (eventType == XMLStreamReader.END_ELEMENT
+					&& TYPE.equals(xmlReader.getLocalName())) {
+				return typeRes;
+			}
+			if (eventType == XMLStreamReader.START_ELEMENT) {
+				switch (xmlReader.getLocalName()) {
+				case LOCATION:
+					typeRes.setDeclaration(parseLocation(xmlReader));
+					break;
+				case PACKAGE:
+					typeRes.setFullyQualifiedPackageName(xmlReader
+							.getElementText());
+					break;
+				case KIND:
+					typeRes.setKind(TypeKind.valueOf(xmlReader.getElementText()
+							.toUpperCase()));
+					break;
+				}
+			}
+		}
+		throw new RuntimeException("This case will never append");
+	}
+
+	/**
+	 * TODO JIV : documentation
+	 * 
+	 * @param xmlReader
+	 * @return
+	 * @throws XMLStreamException
+	 */
+	private Location parseLocation(final XMLStreamReader xmlReader)
+			throws XMLStreamException {
+		final Location location = new Location();
+		while (xmlReader.hasNext()) {
+			xmlReader.next();
+			final int eventType = xmlReader.getEventType();
+			if (eventType == XMLStreamReader.END_ELEMENT
+					&& LOCATION.equals(xmlReader.getLocalName())) {
+				return location;
+			}
+			if (eventType == XMLStreamReader.START_ELEMENT) {
+				switch (xmlReader.getLocalName()) {
+				case PATH:
+					location.setFilePath(xmlReader.getElementText());
+					break;
+				case LINE_NUMBER:
+					// FIXME : pas encore géré ! (comme dans la requête
+					// d'ailleurs)
+					break;
+				}
+			}
+		}
+		throw new RuntimeException("This case will never append");
 	}
 
 	@Override
@@ -119,6 +294,21 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Method> findMethodsTakingAsParameter(final String typeName) {
 		// TODO JIV : ecrire Junit
+		// FIXME JIV : il peut y avoir plusieurs "specifier"
+		/*
+		 * ex : //unit[enum]
+		 * 
+		 * <specifier>private</specifier> <specifier>static</specifier>
+		 */
+		// FIXME JIV : il peut y avoir plusieurs "type_name"
+		/*
+		 * ex : //unit[enum]
+		 * 
+		 * <name>native</name> <name>void</name>
+		 */
+		// FIXME JIV : il y a des déclarations de fonctions dans les interfaces
+		// et les classes abstraitres : <function_decl>
+		/* ex : //unit[enum] */
 		try {
 			final String query = "declare variable $file as xs:string external;"
 					+ " declare variable $typeName as xs:string external;"
@@ -148,10 +338,9 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			preparedQuery.bindString(new QName("file"), filePath, null);
 			preparedQuery.bindString(new QName("typeName"), typeName, null);
 
-			final XQResultSequence resultSequence = preparedQuery
-					.executeQuery();
+			return parseFunctionToMethod(preparedQuery.executeQuery()
+					.getSequenceAsStream());
 
-			return parseFunctionToMethod(resultSequence.getSequenceAsStream());
 		} catch (final XQException e) {
 			throw new RuntimeException(
 					"Probléme lors la requête  : findMethodsTakingAsParameter("
