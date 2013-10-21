@@ -58,11 +58,16 @@ public abstract class AbstractMethodObject<T> {
 	 */
 	public AbstractMethodObject(final XQConnection connection,
 			final String filePath, final CodeSearchEngine searchEngine) {
+
+		if (query == null) {
+			throw new RuntimeException("You have to redefine the query field !");
+		}
+
 		this.connection = connection;
 		this.filePath = filePath;
 		this.searchEngine = searchEngine;
 		try {
-			preparefindMethodsReturningQuery();
+			prepareQuery();
 		} catch (final XQException e) {
 			throw new RuntimeException("ERREUR : " + e.getMessage(), e);
 		}
@@ -77,22 +82,12 @@ public abstract class AbstractMethodObject<T> {
 			throws XMLStreamException;
 
 	/**
-	 * Prepare findSubTypesOf() Query.
+	 * Initialize the prepared Query.
 	 * 
 	 * @throws XQException
 	 */
-	private void preparefindMethodsReturningQuery() throws XQException {
+	private void prepareQuery() throws XQException {
 		preparedQuery = connection.prepareExpression(query);
-		bindFilePath(preparedQuery);
-	}
-
-	/**
-	 * Factorisation du bind.
-	 * 
-	 * @throws XQException
-	 */
-	protected void bindFilePath(final XQPreparedExpression preparedQuery)
-			throws XQException {
 		preparedQuery.bindString(new QName("file"), filePath, null);
 	}
 
