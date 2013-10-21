@@ -49,6 +49,13 @@ public abstract class AbstractMethodObject<T> {
 	@Getter
 	protected XQPreparedExpression preparedQuery;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param connection
+	 * @param filePath
+	 * @param searchEngine
+	 */
 	public AbstractMethodObject(final XQConnection connection,
 			final String filePath, final CodeSearchEngine searchEngine) {
 		this.connection = connection;
@@ -60,6 +67,14 @@ public abstract class AbstractMethodObject<T> {
 			throw new RuntimeException("ERREUR : " + e.getMessage(), e);
 		}
 	}
+
+	/**
+	 * Parser for the result of the query
+	 * 
+	 * @return
+	 */
+	protected abstract T parse(final XMLStreamReader xmlReader)
+			throws XMLStreamException;
 
 	/**
 	 * Prepare findSubTypesOf() Query.
@@ -80,13 +95,5 @@ public abstract class AbstractMethodObject<T> {
 			throws XQException {
 		preparedQuery.bindString(new QName("file"), filePath, null);
 	}
-
-	/**
-	 * Parser for the result of the query
-	 * 
-	 * @return
-	 */
-	protected abstract T parse(final XMLStreamReader xmlReader)
-			throws XMLStreamException;
 
 }
