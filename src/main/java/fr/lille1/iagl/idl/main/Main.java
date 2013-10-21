@@ -3,9 +3,9 @@
  */
 package fr.lille1.iagl.idl.main;
 
+import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.engine.impl.CodeSearchEngineDatabaseImpl;
-import fr.lille1.iagl.idl.utils.Constantes;
 import fr.lille1.iagl.idl.utils.DatabaseConnection;
 
 /**
@@ -22,15 +22,14 @@ public class Main {
 				DatabaseConnection.getConnection(), Constantes.JAVA_XML);
 
 		long start, end;
-		
+
 		start = System.currentTimeMillis();
-		//engine.findType("ObjectOutputStream");
+		// engine.findType("ObjectOutputStream");
 		engine.findFieldsTypedWith("Reader");
 		end = System.currentTimeMillis();
-		
-		System.out.println("findType :"+ (end-start) +" msec");
-		
-		
+
+		System.out.println("findType :" + (end - start) + " msec");
+
 		DatabaseConnection.closeConnection();
 
 	}
