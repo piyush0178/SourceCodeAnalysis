@@ -35,6 +35,14 @@ public class FindFieldsTypedWithObject extends
 			+ " <field_list>{$fields}</field_list>"
 			+ "(: Commentaire inutile permettant de garder le formatage du code mm avec ma save action :)";
 
+	/**
+	 * Constructor
+	 * 
+	 * @param connection
+	 * @param filePath
+	 * @param searchEngine
+	 * @param typeName
+	 */
 	public FindFieldsTypedWithObject(final XQConnection connection,
 			final String filePath, final CodeSearchEngine searchEngine,
 			final String typeName) {

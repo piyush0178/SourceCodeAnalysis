@@ -20,6 +20,13 @@ public class FindMethodsReturningObject extends
 
 	private final String myQuery = declareVariables;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param connection
+	 * @param filePath
+	 * @param searchEngine
+	 */
 	public FindMethodsReturningObject(final XQConnection connection,
 			final String filePath, final CodeSearchEngine searchEngine) {
 		super(connection, filePath, searchEngine);
