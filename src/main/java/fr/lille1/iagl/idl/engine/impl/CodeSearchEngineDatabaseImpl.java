@@ -71,10 +71,14 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	private void initialize() {
 		findType("File");
+		System.out.println("file");
 		findType("String");
+		System.out.println("String");
 		findType("integer");
-		findType("Stream");
-		findSubTypesOf("Throwable");
+		System.out.println("integer");
+		findSubTypesOf("Stream");
+		System.out.println("Stream");
+		findSubTypesOf("Exception");
 		System.out.println("init fini");
 	}
 
