@@ -18,14 +18,21 @@ import fr.lille1.iagl.idl.engine.CodeSearchEngine;
  */
 public class FindSubTypesOfObject extends AbstractMethodObject<List<Type>> {
 
+	/**
+	 * Query recursive
+	 */
 	@Getter
 	private final String query = declareVariables
-			+ " let $results :="
-			+ "		for $class in doc($file)//class[super/extends/name = $typeName]"
-			+ " 	return"
-			+ "		<class>{$class/name/text()}</class>"
-			+ "	return"
-			+ "		<extends>{$results}</extends>"
+			+ " declare function local:findSubtypeOf($root, $typeName as xs:string)"
+			+ "	{"
+			+ "		for $class in $root[super/extends/name = $typeName]"
+			+ "		return"
+			+ "			(<class>{$class/name/text()}</class>, local:findSubtypeOf($root, $class/name/text()))"
+			+ "	};"
+			+ ""
+			+ "	<extends>"
+			+ "		{ local:findSubtypeOf(doc($file)//class, $typeName) }"
+			+ "	</extends>"
 			+ "(: Commentaire inutile permettant de garder le formatage du code mm avec ma save action :)";
 
 	/**
