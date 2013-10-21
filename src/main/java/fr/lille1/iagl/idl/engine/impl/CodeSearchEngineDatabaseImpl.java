@@ -39,6 +39,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	 */
 	public static JCS cache;
 
+	// TODO JIV : supprimer
 	public static int cpt = 0;
 
 	public CodeSearchEngineDatabaseImpl(final XQConnection connection,
