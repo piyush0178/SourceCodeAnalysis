@@ -27,6 +27,12 @@ public class PreparedQueries {
 	private XQPreparedExpression findTypePreparedQuery;
 
 	/**
+	 * Prepared query of the findSubTypesOf() method.<br>
+	 */
+	@Getter
+	private XQPreparedExpression findSubTypesOfQuery;
+
+	/**
 	 * Prepared query of the findFieldsTypedWithQuery() method.<br>
 	 */
 	@Getter
@@ -43,6 +49,7 @@ public class PreparedQueries {
 		this.filePath = filePath;
 		try {
 			prepareFindTypeQuery();
+			prepareFindSubTypesOfQuery();
 			prepareFindMethodsTakingAsParameterQuery();
 			prepareFindFieldsTypedWithQuery();
 
@@ -54,7 +61,7 @@ public class PreparedQueries {
 	}
 
 	/**
-	 * Prepare FindType() Query.
+	 * Prepare findType() Query.
 	 * 
 	 * @throws XQException
 	 */
@@ -62,6 +69,17 @@ public class PreparedQueries {
 		findTypePreparedQuery = connection
 				.prepareExpression(Queries.findTypeQuery);
 		findFilePath(findTypePreparedQuery);
+	}
+
+	/**
+	 * Prepare findSubTypesOf() Query.
+	 * 
+	 * @throws XQException
+	 */
+	private void prepareFindSubTypesOfQuery() throws XQException {
+		findSubTypesOfQuery = connection
+				.prepareExpression(Queries.findSubTypesOfQuery);
+		findFilePath(findSubTypesOfQuery);
 	}
 
 	/**

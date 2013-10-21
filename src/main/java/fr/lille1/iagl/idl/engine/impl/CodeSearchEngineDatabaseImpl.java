@@ -44,6 +44,11 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	public CodeSearchEngineDatabaseImpl(final XQConnection connection,
 			final String filePath) {
+
+		if (connection == null || StringUtils.isEmpty(filePath)) {
+			throw new RuntimeException("Il manque des paramètre !");
+		}
+
 		parser = new QueryAnswerParser(this);
 		preparedQueries = new PreparedQueries(connection, filePath);
 		try {
@@ -97,19 +102,9 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 				cache.put(typeName, typeResult);
 				return typeResult;
 			}
-
-		} catch (final XQException e) {
-			throw new RuntimeException("fyndType(" + typeName + ") FAIL : "
-					+ e.getMessage(), e);
-		} catch (final XMLStreamException e) {
-			throw new RuntimeException(
-					"Probléme lors du parsing du XML : findType(" + typeName
-							+ ") : " + e.getMessage(), e);
-		} catch (final CacheException e) {
-			throw new RuntimeException(
-					"Probléme lors de la mise en cache du type : " + typeName
-							+ ".\n Message de l'exception : " + e.getMessage(),
-					e);
+		} catch (final XQException | XMLStreamException | CacheException e) {
+			throw new RuntimeException("ERREUR : findType( " + typeName
+					+ " ) : " + e.getMessage(), e);
 		}
 	}
 
@@ -144,22 +139,37 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	@Override
 	public List<Type> findSubTypesOf(final String typeName) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			final XQPreparedExpression preparedQuery = preparedQueries
+					.getFindSubTypesOfQuery();
+
+			preparedQuery.bindString(new QName("typeName"), typeName, null);
+
+			return parser.parseFindSubTypesOfResults(preparedQuery
+					.executeQuery().getSequenceAsStream());
+
+		} catch (final XQException | XMLStreamException e) {
+			throw new RuntimeException("ERREUR : findSubTypesOf( " + typeName
+					+ " ) : " + e.getMessage(), e);
+		}
+
 	}
 
 	@Override
 	public List<Field> findFieldsTypedWith(final String typeName) {
-		// TODO Auto-generated method stub
 		try {
 			final XQPreparedExpression preparedQuery = preparedQueries
 					.getFindFieldsTypedWithPreparedQuery();
+
 			preparedQuery.bindString(new QName("typeName"), typeName, null);
+
+			// TODO RAL : Supprimer
 			System.out.println(preparedQuery.executeQuery()
 					.getSequenceAsString(null));
 
 			return parser.parseFieldsTypedWith(preparedQuery.executeQuery()
 					.getSequenceAsStream(), typeName);
+
 		} catch (XMLStreamException | XQException e) {
 			throw new RuntimeException(e);
 		}
@@ -202,17 +212,14 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 			preparedQuery.bindString(new QName("typeName"), typeName, null);
 
-			return parser.parseFunctionToMethod(preparedQuery.executeQuery()
-					.getSequenceAsStream());
+			return parser
+					.parsefindMethodsTakingAsParameterResults(preparedQuery
+							.executeQuery().getSequenceAsStream());
 
-		} catch (final XQException e) {
+		} catch (final XQException | XMLStreamException e) {
 			throw new RuntimeException(
-					"Probléme lors la requête  : findMethodsTakingAsParameter("
-							+ typeName + ") : " + e.getMessage(), e);
-		} catch (final XMLStreamException e) {
-			throw new RuntimeException(
-					"Probléme lors du parsing du XML : findMethodsTakingAsParameter("
-							+ typeName + ") : " + e.getMessage(), e);
+					"ERREUR : findMethodsTakingAsParameter( " + typeName
+							+ " ) : " + e.getMessage(), e);
 		}
 	}
 

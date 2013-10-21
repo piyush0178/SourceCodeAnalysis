@@ -8,10 +8,15 @@ package fr.lille1.iagl.idl.engine.queries;
  */
 public class Queries {
 
-	public static final String findTypeQuery = "declare variable $file as xs:string external;"
-			+ " declare variable $typeName as xs:string external;"
+	public static final String declareVariables = "declare variable $file as xs:string external;"
+			+ " declare variable $typeName as xs:string external;";
+
+	/**
+	 * 
+	 */
+	public static final String findTypeQuery = declareVariables
 			+ "	let $result :="
-			+ " 	for $unit in doc($file)//unit[class/name=$typeName]"
+			+ " 	for $unit in doc($file)//unit[class/name = $typeName]"
 			+ " 	return"
 			+ "		<type>"
 			+ "			<location>"
@@ -37,8 +42,22 @@ public class Queries {
 			+ "		if(count($result) eq 0) then <error>The query returned nothing</error>"
 			+ "		else $result";
 
-	public static final String findFieldsTypedWithQuery = "declare variable $file as xs:string external;"
-			+ " declare variable $typeName as xs:string external;"
+	/**
+	 * 
+	 */
+	public static final String findSubTypesOfQuery = declareVariables
+			+ " let $results :="
+			+ "		for $class in doc($file)//class[super/extends/name = $typeName]"
+			+ " 	return"
+			+ "		<class>{$class/name/text()}</class>"
+			+ "	return"
+			+ "		<extends>{$results}</extends>"
+			+ "(: Commentaire inutile permettant de garder le formatage du code mm avec ma save action :)";
+
+	/**
+	 * 
+	 */
+	public static final String findFieldsTypedWithQuery = declareVariables
 			+ " let $fields := "
 			+ " 	for $class in doc($file)//class[.//block/decl_stmt/decl/type/name = $typeName]"
 			+ " 	 return "
@@ -53,10 +72,13 @@ public class Queries {
 			+ " 				}"
 			+ "			 </class>"
 			+ " return "
-			+ " <field_list>{$fields}</field_list>";
+			+ " <field_list>{$fields}</field_list>"
+			+ "(: Commentaire inutile permettant de garder le formatage du code mm avec ma save action :)";
 
-	public static final String findMethodsTakingAsParameterQuery = "declare variable $file as xs:string external;"
-			+ " declare variable $typeName as xs:string external;"
+	/**
+	 * 
+	 */
+	public static final String findMethodsTakingAsParameterQuery = declareVariables
 			+ " let $functions := "
 			+ "		for $class in doc($file)//class[//function/parameter_list/param/decl/type/name = $typeName]"
 			+ "		for $function in $class//function[parameter_list/param/decl/type/name = $typeName]"

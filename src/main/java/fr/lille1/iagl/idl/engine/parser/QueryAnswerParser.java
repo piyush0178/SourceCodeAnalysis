@@ -18,6 +18,7 @@ import fr.lille1.iagl.idl.engine.CodeSearchEngine;
  */
 public class QueryAnswerParser {
 
+	private static final String EXTENDS = "extends";
 	private static final String CLASS = "class";
 	public static final String PATH = "path";
 	public static final String KIND = "kind";
@@ -35,7 +36,6 @@ public class QueryAnswerParser {
 	public static final String FUNCTION_LIST = "function_list";
 	public static final String PARAMETER_LIST = "parameter_list";
 	public static final String FIELD_LIST = "field_list";
-	
 
 	CodeSearchEngine searchEngine;
 
@@ -114,13 +114,39 @@ public class QueryAnswerParser {
 	}
 
 	/**
+	 * Parse les résultats de la méthode findSubTypesOf() et renvoie le
+	 * résultat.
+	 * 
+	 * @param sequenceAsStream
+	 * @return
+	 * @throws XMLStreamException
+	 */
+	public List<Type> parseFindSubTypesOfResults(final XMLStreamReader xmlReader)
+			throws XMLStreamException {
+		final List<Type> subTypeList = new ArrayList<Type>();
+		while (xmlReader.hasNext()) {
+			xmlReader.next();
+			final int eventType = xmlReader.getEventType();
+			if (eventType == XMLStreamReader.END_ELEMENT
+					&& EXTENDS.equals(xmlReader.getLocalName())) {
+				return subTypeList;
+			} else if (eventType == XMLStreamReader.START_ELEMENT
+					&& CLASS.equals(xmlReader.getLocalName())) {
+				subTypeList.add(searchEngine.findType(xmlReader
+						.getElementText()));
+			}
+		}
+		throw new RuntimeException("This case will never append");
+	}
+
+	/**
 	 * TODO JIV : documentation
 	 * 
 	 * @param xmlReader
 	 * @throws XMLStreamException
 	 */
-	public List<Method> parseFunctionToMethod(final XMLStreamReader xmlReader)
-			throws XMLStreamException {
+	public List<Method> parsefindMethodsTakingAsParameterResults(
+			final XMLStreamReader xmlReader) throws XMLStreamException {
 		final List<Method> methodList = new ArrayList<Method>();
 		Method method = null;
 		while (xmlReader.hasNext()) {
@@ -182,15 +208,15 @@ public class QueryAnswerParser {
 		}
 		throw new RuntimeException("This case will never append");
 	}
-	
+
 	/**
 	 * 
 	 * @param xmlReader
 	 * @return
 	 * @throws XMLStreamException
 	 */
-	public List<Field> parseFieldsTypedWith(final XMLStreamReader xmlReader, final String typeName)
-			throws XMLStreamException {
+	public List<Field> parseFieldsTypedWith(final XMLStreamReader xmlReader,
+			final String typeName) throws XMLStreamException {
 		final List<Field> fields = new ArrayList<Field>();
 		Field field = null;
 		final Type declaringType = searchEngine.findType(typeName);
@@ -198,28 +224,26 @@ public class QueryAnswerParser {
 		while (xmlReader.hasNext()) {
 			xmlReader.next();
 			final int eventType = xmlReader.getEventType();
-			if (eventType == XMLStreamReader.END_ELEMENT ) {
-				switch(xmlReader.getLocalName()){
-				case  FIELD_LIST : 
+			if (eventType == XMLStreamReader.END_ELEMENT) {
+				switch (xmlReader.getLocalName()) {
+				case FIELD_LIST:
 					return fields;
 				}
-			}
-			if (eventType == XMLStreamReader.START_ELEMENT) {
-				String localName = xmlReader.getLocalName();
+			} else if (eventType == XMLStreamReader.START_ELEMENT) {
+				final String localName = xmlReader.getLocalName();
 				switch (localName) {
-					case CLASS_NAME:
-						type = searchEngine.findType(xmlReader
-							.getElementText());
-						break;
+				case CLASS_NAME:
+					type = searchEngine.findType(xmlReader.getElementText());
+					break;
 				case NAME:
-						field = new Field();
-						field.setDeclaringType(declaringType);
-						field.setType(type);
-						field.setName(xmlReader.getElementText());
-						fields.add(field);
-						break;
+					field = new Field();
+					field.setDeclaringType(declaringType);
+					field.setType(type);
+					field.setName(xmlReader.getElementText());
+					fields.add(field);
+					break;
 				}
-				
+
 			}
 		}
 		return null;

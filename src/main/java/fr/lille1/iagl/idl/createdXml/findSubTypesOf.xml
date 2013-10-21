@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extends>
+  <class>IOException</class>
+  <class>ClassNotFoundException</class>
+  <class>CloneNotSupportedException</class>
+  <class>IllegalAccessException</class>
+  <class>InstantiationException</class>
+  <class>InterruptedException</class>
+  <class>NoSuchFieldException</class>
+  <class>NoSuchMethodException</class>
+  <class>RuntimeException</class>
+  <class>IllegalClassFormatException</class>
+  <class>UnmodifiableClassException</class>
+  <class>InvocationTargetException</class>
+  <class>URISyntaxException</class>
+  <class>AlreadyBoundException</class>
+  <class>NotBoundException</class>
+  <class>ActivationException</class>
+  <class>ServerNotActiveException</class>
+  <class>GeneralSecurityException</class>
+  <class>PrivilegedActionException</class>
+  <class>AclNotFoundException</class>
+  <class>LastOwnerException</class>
+  <class>NotOwnerException</class>
+  <class>SQLException</class>
+  <class>ParseException</class>
+  <class>TooManyListenersException</class>
+  <class>BrokenBarrierException</class>
+  <class>ExecutionException</class>
+  <class>TimeoutException</class>
+  <class>BackingStoreException</class>
+  <class>InvalidPreferencesFormatException</class>
+  <class>DataFormatException</class>
+</extends>
