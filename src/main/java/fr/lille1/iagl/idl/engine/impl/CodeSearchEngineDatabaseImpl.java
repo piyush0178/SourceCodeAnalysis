@@ -19,20 +19,20 @@ import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.PrimitiveType;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.bean.UnknowType;
+import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.constantes.JavaKeyword;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
-import fr.lille1.iagl.idl.engine.parser.QueryAnswerParser;
-import fr.lille1.iagl.idl.engine.queries.PreparedQueries;
+import fr.lille1.iagl.idl.engine.methodQueries.FindFieldsTypedWithObject;
+import fr.lille1.iagl.idl.engine.methodQueries.FindMethodsTakingAsParameterObject;
+import fr.lille1.iagl.idl.engine.methodQueries.FindSubTypesOfObject;
+import fr.lille1.iagl.idl.engine.methodQueries.FindTypeObject;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
-	/**
-	 * Object that provides parser for query answers
-	 */
-	private final QueryAnswerParser parser;
+	XQConnection connection;
 
-	private final PreparedQueries preparedQueries;
+	String filePath;
 
 	/**
 	 * cache de résultat des queries
@@ -42,15 +42,20 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	// TODO JIV : supprimer
 	public static int cpt = 0;
 
+	private FindTypeObject findTypeObject;
+	private FindSubTypesOfObject findSubTypesOfObject;
+	private FindMethodsTakingAsParameterObject findMethodsTakingAsParameterObject;
+	private FindFieldsTypedWithObject findFieldsTypedWithObject;
+
 	public CodeSearchEngineDatabaseImpl(final XQConnection connection,
 			final String filePath) {
-
 		if (connection == null || StringUtils.isEmpty(filePath)) {
 			throw new RuntimeException("Il manque des paramètre !");
 		}
 
-		parser = new QueryAnswerParser(this);
-		preparedQueries = new PreparedQueries(connection, filePath);
+		this.connection = connection;
+		this.filePath = filePath;
+
 		try {
 			cache = JCS.getInstance("default");
 		} catch (final CacheException e) {
@@ -70,6 +75,11 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			return typeCached;
 		}
 		try {
+			if (findTypeObject == null) {
+				findTypeObject = new FindTypeObject(connection, filePath, this,
+						typeName);
+			}
+
 			// Gestion des types primitifs
 			if (JavaKeyword.getPrimitiveType(typeName) != null) {
 				final PrimitiveType primitiveTypeCached = new PrimitiveType(
@@ -83,10 +93,10 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			// annotations.
 			// FIXME : Je ne gére pas encore les numéros de lignes dans Location
 
-			final XQPreparedExpression findTypePreparedQuery = preparedQueries
-					.getFindTypePreparedQuery();
-			findTypePreparedQuery.bindString(new QName("typeName"), typeName,
-					null);
+			final XQPreparedExpression findTypePreparedQuery = findTypeObject
+					.getPreparedQuery();
+			findTypePreparedQuery.bindString(new QName(Constantes.TYPE_NAME),
+					typeName, null);
 			final XMLStreamReader xmlReader = findTypePreparedQuery
 					.executeQuery().getSequenceAsStream();
 
@@ -97,8 +107,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 				cache.put(typeName, unknowType);
 				return unknowType;
 			} else {
-				final Type typeResult = parser.parseFindTypeResults(xmlReader,
-						typeName);
+				final Type typeResult = findTypeObject.parse(xmlReader);
 				cache.put(typeName, typeResult);
 				return typeResult;
 			}
@@ -121,9 +130,10 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			xmlReader.next();
 			final int eventType = xmlReader.getEventType();
 			if (eventType == XMLStreamReader.START_ELEMENT) {
-				return QueryAnswerParser.ERROR.equals(xmlReader.getLocalName());
+				return Constantes.ERROR.equals(xmlReader.getLocalName());
 			}
 		}
+
 		throw new RuntimeException("This case will never append");
 	}
 
@@ -140,13 +150,19 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Type> findSubTypesOf(final String typeName) {
 		try {
-			final XQPreparedExpression preparedQuery = preparedQueries
-					.getFindSubTypesOfQuery();
+			if (findSubTypesOfObject == null) {
+				findSubTypesOfObject = new FindSubTypesOfObject(connection,
+						typeName, this);
+			}
 
-			preparedQuery.bindString(new QName("typeName"), typeName, null);
+			final XQPreparedExpression preparedQuery = findSubTypesOfObject
+					.getPreparedQuery();
 
-			return parser.parseFindSubTypesOfResults(preparedQuery
-					.executeQuery().getSequenceAsStream());
+			preparedQuery.bindString(new QName(Constantes.TYPE_NAME), typeName,
+					null);
+
+			return findSubTypesOfObject.parse(preparedQuery.executeQuery()
+					.getSequenceAsStream());
 
 		} catch (final XQException | XMLStreamException e) {
 			throw new RuntimeException("ERREUR : findSubTypesOf( " + typeName
@@ -158,17 +174,23 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Field> findFieldsTypedWith(final String typeName) {
 		try {
-			final XQPreparedExpression preparedQuery = preparedQueries
-					.getFindFieldsTypedWithPreparedQuery();
+			if (findFieldsTypedWithObject == null) {
+				findFieldsTypedWithObject = new FindFieldsTypedWithObject(
+						connection, filePath, this, typeName);
+			}
 
-			preparedQuery.bindString(new QName("typeName"), typeName, null);
+			final XQPreparedExpression preparedQuery = findFieldsTypedWithObject
+					.getPreparedQuery();
+
+			preparedQuery.bindString(new QName(Constantes.TYPE_NAME), typeName,
+					null);
 
 			// TODO RAL : Supprimer
 			System.out.println(preparedQuery.executeQuery()
 					.getSequenceAsString(null));
 
-			return parser.parseFieldsTypedWith(preparedQuery.executeQuery()
-					.getSequenceAsStream(), typeName);
+			return findFieldsTypedWithObject.parse(preparedQuery.executeQuery()
+					.getSequenceAsStream());
 
 		} catch (XMLStreamException | XQException e) {
 			throw new RuntimeException(e);
@@ -207,14 +229,19 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Method> findMethodsTakingAsParameter(final String typeName) {
 		try {
-			final XQPreparedExpression preparedQuery = preparedQueries
-					.getFindMethodsTakingAsParameterPreparedQuery();
+			if (findMethodsTakingAsParameterObject == null) {
+				findMethodsTakingAsParameterObject = new FindMethodsTakingAsParameterObject(
+						connection, filePath, this);
+			}
 
-			preparedQuery.bindString(new QName("typeName"), typeName, null);
+			final XQPreparedExpression preparedQuery = findMethodsTakingAsParameterObject
+					.getPreparedQuery();
 
-			return parser
-					.parsefindMethodsTakingAsParameterResults(preparedQuery
-							.executeQuery().getSequenceAsStream());
+			preparedQuery.bindString(new QName(Constantes.TYPE_NAME), typeName,
+					null);
+
+			return findMethodsTakingAsParameterObject.parse(preparedQuery
+					.executeQuery().getSequenceAsStream());
 
 		} catch (final XQException | XMLStreamException e) {
 			throw new RuntimeException(

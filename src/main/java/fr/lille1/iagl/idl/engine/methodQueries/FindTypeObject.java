@@ -7,6 +7,7 @@ import javax.xml.xquery.XQConnection;
 import fr.lille1.iagl.idl.bean.Location;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.bean.TypeKind;
+import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 
 /**
@@ -53,7 +54,7 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 	}
 
 	@Override
-	protected Type parse(final XMLStreamReader xmlReader)
+	public Type parse(final XMLStreamReader xmlReader)
 			throws XMLStreamException {
 		final Type typeRes = new Type();
 		typeRes.setName(typeName);
@@ -61,18 +62,18 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 			xmlReader.next();
 			final int eventType = xmlReader.getEventType();
 			if (eventType == XMLStreamReader.END_ELEMENT
-					&& TYPE.equals(xmlReader.getLocalName())) {
+					&& Constantes.TYPE.equals(xmlReader.getLocalName())) {
 				return typeRes;
 			} else if (eventType == XMLStreamReader.START_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
-				case LOCATION:
+				case Constantes.LOCATION:
 					typeRes.setDeclaration(parseLocation(xmlReader));
 					break;
-				case PACKAGE:
+				case Constantes.PACKAGE:
 					typeRes.setFullyQualifiedPackageName(xmlReader
 							.getElementText());
 					break;
-				case KIND:
+				case Constantes.KIND:
 					typeRes.setKind(TypeKind.valueOf(xmlReader.getElementText()
 							.toUpperCase()));
 					break;
@@ -96,14 +97,14 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 			xmlReader.next();
 			final int eventType = xmlReader.getEventType();
 			if (eventType == XMLStreamReader.END_ELEMENT
-					&& LOCATION.equals(xmlReader.getLocalName())) {
+					&& Constantes.LOCATION.equals(xmlReader.getLocalName())) {
 				return location;
 			} else if (eventType == XMLStreamReader.START_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
-				case PATH:
+				case Constantes.PATH:
 					location.setFilePath(xmlReader.getElementText());
 					break;
-				case LINE_NUMBER:
+				case Constantes.LINE_NUMBER:
 					// FIXME : pas encore géré ! (comme dans la requête
 					// d'ailleurs)
 					break;

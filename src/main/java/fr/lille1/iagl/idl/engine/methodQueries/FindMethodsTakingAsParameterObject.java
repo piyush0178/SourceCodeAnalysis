@@ -9,6 +9,7 @@ import javax.xml.xquery.XQConnection;
 
 import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.Type;
+import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 
 /**
@@ -55,7 +56,7 @@ public class FindMethodsTakingAsParameterObject extends
 	}
 
 	@Override
-	protected List<Method> parse(final XMLStreamReader xmlReader)
+	public List<Method> parse(final XMLStreamReader xmlReader)
 			throws XMLStreamException {
 		final List<Method> methodList = new ArrayList<Method>();
 		Method method = null;
@@ -64,29 +65,29 @@ public class FindMethodsTakingAsParameterObject extends
 			final int eventType = xmlReader.getEventType();
 			if (eventType == XMLStreamReader.END_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
-				case FUNCTION:
+				case Constantes.FUNCTION:
 					methodList.add(method);
 					break;
-				case FUNCTION_LIST:
+				case Constantes.FUNCTION_LIST:
 					return methodList;
 				}
 			} else if (eventType == XMLStreamReader.START_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
-				case FUNCTION:
+				case Constantes.FUNCTION:
 					method = new Method();
 					break;
-				case CLASS:
+				case Constantes.CLASS:
 					method.setType(searchEngine.findType(xmlReader
 							.getElementText()));
 					break;
-				case TYPE_NAME:
+				case Constantes.TYPE_NAME:
 					method.setDeclaringType(searchEngine.findType(xmlReader
 							.getElementText()));
 					break;
-				case METHOD_NAME:
+				case Constantes.METHOD_NAME:
 					method.setName(xmlReader.getElementText());
 					break;
-				case PARAMETER_LIST:
+				case Constantes.PARAMETER_LIST:
 					method.setParameters(parseFunctionParameterList(xmlReader));
 					break;
 				}
@@ -108,10 +109,11 @@ public class FindMethodsTakingAsParameterObject extends
 			xmlReader.next();
 			final int eventType = xmlReader.getEventType();
 			if (eventType == XMLStreamReader.END_ELEMENT
-					&& PARAMETER_LIST.equals(xmlReader.getLocalName())) {
+					&& Constantes.PARAMETER_LIST.equals(xmlReader
+							.getLocalName())) {
 				return paramList;
 			} else if (eventType == XMLStreamReader.START_ELEMENT
-					&& TYPE.equals(xmlReader.getLocalName())) {
+					&& Constantes.TYPE.equals(xmlReader.getLocalName())) {
 				paramList
 						.add(searchEngine.findType(xmlReader.getElementText()));
 			}
