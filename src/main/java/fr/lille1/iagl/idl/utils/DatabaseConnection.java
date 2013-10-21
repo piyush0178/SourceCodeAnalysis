@@ -25,13 +25,7 @@ public class DatabaseConnection {
 		try {
 			dataSource.setProperty("serverName", "localhost");
 			dataSource.setProperty("port", "1984");
-			// dataSource.setProperty("user", );
-			// dataSource.setProperty("password", );
-
 			connection = dataSource.getConnection("admin", "admin");
-
-			// connection = dataSource.getConnection();
-
 		} catch (final XQException e) {
 			throw new RuntimeException(e);
 		}
