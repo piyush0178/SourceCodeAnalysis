@@ -27,10 +27,6 @@ import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
-	private final XQConnection connection;
-
-	private final String filePath;
-
 	/**
 	 * Object that provides parser for query answers
 	 */
@@ -47,8 +43,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	public CodeSearchEngineDatabaseImpl(final XQConnection connection,
 			final String filePath) {
-		this.connection = connection;
-		this.filePath = filePath;
 		parser = new QueryAnswerParser(this);
 		preparedQueries = new PreparedQueries(connection, filePath);
 		try {
@@ -158,7 +152,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 		// TODO Auto-generated method stub
 		try {
 			final XQPreparedExpression preparedQuery = preparedQueries
-					.getFindFieldsTypedWithQuery();
+					.getFindFieldsTypedWithPreparedQuery();
 			preparedQuery.bindString(new QName("typeName"), typeName, null);
 			System.out.println(preparedQuery.executeQuery()
 					.getSequenceAsString(null));
@@ -203,7 +197,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	public List<Method> findMethodsTakingAsParameter(final String typeName) {
 		try {
 			final XQPreparedExpression preparedQuery = preparedQueries
-					.getFindMethodsTakingAsParameterQuery();
+					.getFindMethodsTakingAsParameterPreparedQuery();
 
 			preparedQuery.bindString(new QName("typeName"), typeName, null);
 

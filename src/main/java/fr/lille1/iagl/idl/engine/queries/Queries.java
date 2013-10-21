@@ -37,6 +37,24 @@ public class Queries {
 			+ "		if(count($result) eq 0) then <error>The query returned nothing</error>"
 			+ "		else $result";
 
+	public static final String findFieldsTypedWithQuery = "declare variable $file as xs:string external;"
+			+ " declare variable $typeName as xs:string external;"
+			+ " let $fields := "
+			+ " 	for $class in doc($file)//class[.//block/decl_stmt/decl/type/name = $typeName]"
+			+ " 	 return "
+			+ " 		<class>"
+			+ "  			 <class_name>{ $class/name/text() }</class_name>"
+			+ " 				{"
+			+ " 					for $field in $class//block/decl_stmt/decl[type/name=$typeName]"
+			+ " 					return"
+			+ " 					<field>"
+			+ " 						<name>{ $field/name/text() }</name>"
+			+ " 					</field>"
+			+ " 				}"
+			+ "			 </class>"
+			+ " return "
+			+ " <field_list>{$fields}</field_list>";
+
 	public static final String findMethodsTakingAsParameterQuery = "declare variable $file as xs:string external;"
 			+ " declare variable $typeName as xs:string external;"
 			+ " let $functions := "
@@ -57,23 +75,5 @@ public class Queries {
 			+ "		</function>"
 			+ " return"
 			+ "		<function_list>{$functions}</function_list>";
-
-	public static final String findFieldsTypedWithQuery = "declare variable $file as xs:string external;"
-			+ " declare variable $typeName as xs:string external;"
-			+ " let $fields := "
-			+ " 	for $class in doc($file)//class[.//block/decl_stmt/decl/type/name = $typeName]"
-			+ " 	 return "
-			+ " 		<class>"
-			+ "  			 <class_name>{ $class/name/text() }</class_name>"
-			+ " 				{"
-			+ " 					for $field in $class//block/decl_stmt/decl[type/name=$typeName]"
-			+ " 					return"
-			+ " 					<field>"
-			+ " 						<name>{ $field/name/text() }</name>"
-			+ " 					</field>"
-			+ " 				}"
-			+ "			 </class>"
-			+ " return "
-			+ " <field_list>{$fields}</field_list>";
 
 }

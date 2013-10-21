@@ -3,8 +3,6 @@ package fr.lille1.iagl.idl.utils;
 import javax.xml.xquery.XQConnection;
 import javax.xml.xquery.XQDataSource;
 import javax.xml.xquery.XQException;
-import javax.xml.xquery.XQPreparedExpression;
-import javax.xml.xquery.XQResultSequence;
 
 import net.xqj.basex.BaseXXQDataSource;
 
@@ -13,8 +11,6 @@ import net.xqj.basex.BaseXXQDataSource;
  * BDD.
  */
 public class DatabaseConnection {
-
-	private final static DatabaseConnection dbConnection = new DatabaseConnection();
 
 	private static XQConnection connection;
 
@@ -55,6 +51,5 @@ public class DatabaseConnection {
 					"Probléme lors de la fermeture de la connexion.", e);
 		}
 	}
-
 
 }

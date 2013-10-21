@@ -27,24 +27,24 @@ public class PreparedQueries {
 	private XQPreparedExpression findTypePreparedQuery;
 
 	/**
-	 * Prepared query of the findMethodsTakingAsParameter() method.<br>
-	 */
-	@Getter
-	private XQPreparedExpression findMethodsTakingAsParameterQuery;
-
-	/**
 	 * Prepared query of the findFieldsTypedWithQuery() method.<br>
 	 */
 	@Getter
-	private XQPreparedExpression findFieldsTypedWithQuery;
+	private XQPreparedExpression findFieldsTypedWithPreparedQuery;
+
+	/**
+	 * Prepared query of the findMethodsTakingAsParameter() method.<br>
+	 */
+	@Getter
+	private XQPreparedExpression findMethodsTakingAsParameterPreparedQuery;
 
 	public PreparedQueries(final XQConnection connection, final String filePath) {
 		this.connection = connection;
 		this.filePath = filePath;
 		try {
-			prepareFindTypeQuery(connection, filePath);
-			prepareFindMethodsTakingAsParameterQuery(connection, filePath);
-			prepareFindFieldsTypedWithQuery(connection, filePath);
+			prepareFindTypeQuery();
+			prepareFindMethodsTakingAsParameterQuery();
+			prepareFindFieldsTypedWithQuery();
 
 		} catch (final XQException e) {
 			throw new RuntimeException(
@@ -54,41 +54,45 @@ public class PreparedQueries {
 	}
 
 	/**
-	 * @param connection
-	 * @param filePath
+	 * Prepare FindType() Query.
+	 * 
 	 * @throws XQException
 	 */
-	private void prepareFindMethodsTakingAsParameterQuery(
-			final XQConnection connection, final String filePath)
-			throws XQException {
-		findMethodsTakingAsParameterQuery = connection
-				.prepareExpression(Queries.findMethodsTakingAsParameterQuery);
-		findMethodsTakingAsParameterQuery.bindString(new QName("file"),
-				filePath, null);
-	}
-
-	/**
-	 * @param connection
-	 * @param filePath
-	 * @throws XQException
-	 */
-	private void prepareFindTypeQuery(final XQConnection connection,
-			final String filePath) throws XQException {
+	private void prepareFindTypeQuery() throws XQException {
 		findTypePreparedQuery = connection
 				.prepareExpression(Queries.findTypeQuery);
-		findTypePreparedQuery.bindString(new QName("file"), filePath, null);
+		findFilePath(findTypePreparedQuery);
 	}
 
 	/**
-	 * @param connection
-	 * @param filePath
+	 * Prepare FindFieldsTypedWith() Query.
+	 * 
 	 * @throws XQException
 	 */
-	private void prepareFindFieldsTypedWithQuery(final XQConnection connection,
-			final String filePath) throws XQException {
-		findTypePreparedQuery = connection
+	private void prepareFindFieldsTypedWithQuery() throws XQException {
+		findFieldsTypedWithPreparedQuery = connection
 				.prepareExpression(Queries.findFieldsTypedWithQuery);
+		findFilePath(findFieldsTypedWithPreparedQuery);
+	}
 
-		findTypePreparedQuery.bindString(new QName("file"), filePath, null);
+	/**
+	 * Prepare FindMethodsTakingAsParameter() Query
+	 * 
+	 * @throws XQException
+	 */
+	private void prepareFindMethodsTakingAsParameterQuery() throws XQException {
+		findMethodsTakingAsParameterPreparedQuery = connection
+				.prepareExpression(Queries.findMethodsTakingAsParameterQuery);
+		findFilePath(findMethodsTakingAsParameterPreparedQuery);
+	}
+
+	/**
+	 * Factorisation du bind.
+	 * 
+	 * @throws XQException
+	 */
+	private void findFilePath(final XQPreparedExpression preparedQuery)
+			throws XQException {
+		preparedQuery.bindString(new QName("file"), filePath, null);
 	}
 }
