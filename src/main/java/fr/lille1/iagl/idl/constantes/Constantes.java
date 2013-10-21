@@ -30,7 +30,9 @@ public class Constantes {
 	public static final String FUNCTION_LIST = "function_list";
 	public static final String PARAMETER_LIST = "parameter_list";
 	public static final String FIELD_LIST = "field_list";
-
+	public static final String METHOD_LIST = "method_list";
 	public static final String TYPE_NAME_XQUERY = "typeName";
+	public static final String RETURN = "return";
+	public static final String PARAMETER = "parameter";
 
 }

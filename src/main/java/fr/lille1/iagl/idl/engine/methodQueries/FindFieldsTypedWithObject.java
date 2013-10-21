@@ -30,9 +30,7 @@ public class FindFieldsTypedWithObject extends
 			+ " 				{"
 			+ " 					for $field in $class//block/decl_stmt/decl[type/name=$typeName]"
 			+ " 					return"
-			+ " 					<field>"
 			+ " 						<name>{ $field/name/text() }</name>"
-			+ " 					</field>"
 			+ " 				}"
 			+ "			 </class>"
 			+ " return "
@@ -57,8 +55,8 @@ public class FindFieldsTypedWithObject extends
 			throws XMLStreamException {
 		final List<Field> fields = new ArrayList<Field>();
 		Field field = null;
-		final Type declaringType = searchEngine.findType(typeName);
-		Type type = null;
+		final Type type = searchEngine.findType(typeName);
+		Type declaringType = null;
 		while (xmlReader.hasNext()) {
 			xmlReader.next();
 			final int eventType = xmlReader.getEventType();
@@ -71,12 +69,13 @@ public class FindFieldsTypedWithObject extends
 				final String localName = xmlReader.getLocalName();
 				switch (localName) {
 				case Constantes.CLASS_NAME:
-					type = searchEngine.findType(xmlReader.getElementText());
+					declaringType = searchEngine.findType(xmlReader
+							.getElementText());
 					break;
 				case Constantes.NAME:
 					field = new Field();
-					field.setDeclaringType(declaringType);
-					field.setType(type);
+					field.setDeclaringType(type);
+					field.setType(declaringType);
 					field.setName(xmlReader.getElementText());
 					fields.add(field);
 					break;

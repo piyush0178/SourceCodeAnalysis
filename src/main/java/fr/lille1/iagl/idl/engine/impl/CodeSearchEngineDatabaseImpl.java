@@ -23,6 +23,7 @@ import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.constantes.JavaKeyword;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.engine.methodQueries.FindFieldsTypedWithObject;
+import fr.lille1.iagl.idl.engine.methodQueries.FindMethodsOfObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindMethodsTakingAsParameterObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindSubTypesOfObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindTypeObject;
@@ -46,6 +47,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	private FindSubTypesOfObject findSubTypesOfObject;
 	private FindMethodsTakingAsParameterObject findMethodsTakingAsParameterObject;
 	private FindFieldsTypedWithObject findFieldsTypedWithObject;
+	private FindMethodsOfObject findMethodsOfObject;
 
 	public CodeSearchEngineDatabaseImpl(final XQConnection connection,
 			final String filePath) {
@@ -63,6 +65,17 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 					"Probléme lors l'instanciation du cache : "
 							+ e.getMessage(), e);
 		}
+
+		initialize();
+	}
+
+	private void initialize() {
+		findType("File");
+		findType("String");
+		findType("integer");
+		findType("Stream");
+		findSubTypesOf("Throwable");
+		System.out.println("init fini");
 	}
 
 	@Override
@@ -213,10 +226,29 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	@Override
 	public List<Method> findMethodsOf(final String typeName) {
-		// TODO Auto-generated method stub
-		// requete xquery :
-		// //unit/class/block/function[type/name="typeName"]/name
-		return null;
+		try {
+			if (findMethodsOfObject == null) {
+				findMethodsOfObject = new FindMethodsOfObject(connection,
+						filePath, this);
+			}
+			findMethodsOfObject.setTypeName(typeName);
+
+			final XQPreparedExpression preparedQuery = findMethodsOfObject
+					.getPreparedQuery();
+
+			preparedQuery.bindString(new QName(Constantes.TYPE_NAME_XQUERY),
+					typeName, null);
+
+			// TODO RAL : Supprimer
+			System.out.println(preparedQuery.executeQuery()
+					.getSequenceAsString(null));
+
+			return findMethodsOfObject.parse(preparedQuery.executeQuery()
+					.getSequenceAsStream());
+
+		} catch (XMLStreamException | XQException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
