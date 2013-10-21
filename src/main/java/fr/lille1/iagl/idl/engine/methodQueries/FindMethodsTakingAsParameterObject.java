@@ -18,9 +18,6 @@ import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 public class FindMethodsTakingAsParameterObject extends
 		AbstractMethodObject<List<Method>> {
 
-	/**
-	 * 
-	 */
 	private final String findMethodsTakingAsParameterQuery = declareVariables
 			+ " let $functions := "
 			+ "		for $class in doc($file)//class[//function/parameter_list/param/decl/type/name = $typeName]"
