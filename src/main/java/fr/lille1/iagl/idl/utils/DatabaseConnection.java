@@ -12,6 +12,12 @@ import net.xqj.basex.BaseXXQDataSource;
  */
 public class DatabaseConnection {
 
+	/**
+	 * Singleton
+	 */
+	@SuppressWarnings("unused")
+	private final static DatabaseConnection dbConnection = new DatabaseConnection();
+
 	private static XQConnection connection;
 
 	private DatabaseConnection() {
