@@ -25,6 +25,7 @@ import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.engine.methodQueries.FindFieldsTypedWithObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindMethodThrowingObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindMethodsOfObject;
+import fr.lille1.iagl.idl.engine.methodQueries.FindMethodsReturningObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindMethodsTakingAsParameterObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindSubTypesOfObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindTypeObject;
@@ -50,6 +51,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	private FindFieldsTypedWithObject findFieldsTypedWithObject;
 	private FindMethodsOfObject findMethodsOfObject;
 	private FindMethodThrowingObject findMethodsThrowingObject;
+	private FindMethodsReturningObject findMethodsReturningObject;
 
 	public CodeSearchEngineDatabaseImpl(final XQConnection connection,
 			final String filePath) {
@@ -231,8 +233,25 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	@Override
 	public List<Method> findMethodsReturning(final String typeName) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			if (findMethodsReturningObject == null) {
+				findMethodsReturningObject = new FindMethodsReturningObject(
+						connection, filePath, this);
+			}
+
+			final XQPreparedExpression preparedQuery = findMethodsReturningObject
+					.getPreparedQuery();
+
+			preparedQuery.bindString(new QName(Constantes.TYPE_NAME_XQUERY),
+					typeName, null);
+
+			return findMethodsReturningObject.parse(preparedQuery.executeQuery()
+					.getSequenceAsStream());
+
+		} catch (final XQException | XMLStreamException e) {
+			throw new RuntimeException("ERREUR : findMethodsReturning( "
+					+ typeName + " ) : " + e.getMessage(), e);
+		}
 	}
 
 	// Jules
