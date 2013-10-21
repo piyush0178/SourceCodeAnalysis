@@ -110,44 +110,23 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 					.getPreparedQuery();
 			findTypePreparedQuery.bindString(new QName(
 					Constantes.TYPE_NAME_XQUERY), typeName, null);
+
 			final XMLStreamReader xmlReader = findTypePreparedQuery
 					.executeQuery().getSequenceAsStream();
 
 			cpt++;
 
-			if (isResultEmpty(xmlReader)) {
-				final Type unknowType = new UnknowType(typeName);
-				cache.put(typeName, unknowType);
-				return unknowType;
-			} else {
-				final Type typeResult = findTypeObject.parse(xmlReader);
-				cache.put(typeName, typeResult);
-				return typeResult;
+			Type typeResult = findTypeObject.parse(xmlReader);
+			if (typeResult == null) {
+				typeResult = new UnknowType(typeName);
 			}
+			cache.put(typeName, typeResult);
+			return typeResult;
+
 		} catch (final XQException | XMLStreamException | CacheException e) {
 			throw new RuntimeException("ERREUR : findType( " + typeName
 					+ " ) : " + e.getMessage(), e);
 		}
-	}
-
-	/**
-	 * Return true if the query result passed in parameter is empty.
-	 * 
-	 * @param sequenceAsStream
-	 * @return
-	 * @throws XMLStreamException
-	 */
-	private boolean isResultEmpty(final XMLStreamReader xmlReader)
-			throws XMLStreamException {
-		while (xmlReader.hasNext()) {
-			xmlReader.next();
-			final int eventType = xmlReader.getEventType();
-			if (eventType == XMLStreamReader.START_ELEMENT) {
-				return Constantes.ERROR.equals(xmlReader.getLocalName());
-			}
-		}
-
-		throw new RuntimeException("This case will never append");
 	}
 
 	/**
@@ -181,7 +160,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			throw new RuntimeException("ERREUR : findSubTypesOf( " + typeName
 					+ " ) : " + e.getMessage(), e);
 		}
-
 	}
 
 	@Override
@@ -199,17 +177,12 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			preparedQuery.bindString(new QName(Constantes.TYPE_NAME_XQUERY),
 					typeName, null);
 
-			// TODO RAL : Supprimer
-			System.out.println(preparedQuery.executeQuery()
-					.getSequenceAsString(null));
-
 			return findFieldsTypedWithObject.parse(preparedQuery.executeQuery()
 					.getSequenceAsStream());
 
 		} catch (XMLStreamException | XQException e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	@Override

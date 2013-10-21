@@ -16,6 +16,7 @@ import org.junit.runners.JUnit4;
 
 import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.Type;
+import fr.lille1.iagl.idl.bean.UnknowType;
 import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.engine.impl.CodeSearchEngineDatabaseImpl;
 import fr.lille1.iagl.idl.utils.DatabaseConnection;
@@ -77,8 +78,18 @@ public class CodeSearchEngineTest {
 	}
 
 	@Test
+	public void testFindTypeWithUnknowType() throws Exception {
+		final String typeName = "toto";
+		final Type type = engine.findType(typeName);
+		Assert.assertNotNull(type);
+		Assert.assertTrue(type instanceof UnknowType);
+	}
+
+	@Test
 	public void testFindSubTypesOf() throws Exception {
-		throw new RuntimeException("not yet implemented");
+		final List<Type> types = engine.findSubTypesOf("RuntimeException");
+		Assert.assertNotNull(types);
+		Assert.assertEquals(45, types.size());
 	}
 
 	@Test
