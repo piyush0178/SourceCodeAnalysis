@@ -21,7 +21,8 @@ public class FindMethodsTakingAsParameterObject extends
 
 	@Getter
 	private final String query = declareVariables
-			+ " let $functions := "
+			+ " <function_list> "
+			+ "	{"
 			+ "		for $class in doc($file)//class[//function/parameter_list/param/decl/type/name = $typeName]"
 			+ "		for $function in $class//function[parameter_list/param/decl/type/name = $typeName]"
 			+ " 	return"
@@ -37,8 +38,8 @@ public class FindMethodsTakingAsParameterObject extends
 			+ "			}"
 			+ "			</parameter_list>"
 			+ "		</function>"
-			+ " return"
-			+ "		<function_list>{$functions}</function_list>"
+			+ "	}"
+			+ "	<function_list>"
 			+ "(: Commentaire inutile permettant de garder le formatage du code mm avec ma save action :)";
 
 	/**
