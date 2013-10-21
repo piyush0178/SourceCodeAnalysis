@@ -20,14 +20,15 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		final CodeSearchEngine engine = new CodeSearchEngineDatabaseImpl(
-				DatabaseConnection.getConnection(), Constantes.JAVA_XML);
+				DatabaseConnection.getConnection(), Constantes.LUCENE_XML);
 
 		long start, end;
 
 		start = System.currentTimeMillis();
 
-		Type type = engine.findType("File");
-		// final List<Field> fields = engine.findFieldsTypedWith("String");
+		// final Type type = engine.findType("File");
+		// final List<Type> types = engine.findSubTypesOf("RuntimeException");
+		final Type type = engine.findType("File");
 		// final List<Method> methods = engine
 		// .findMethodsTakingAsParameter("ObjectInputStream");
 		// final Type type = engine.findType("void");
@@ -36,14 +37,10 @@ public class Main {
 
 		// System.out.println("type : " + type);
 		// int i = 0;
-		// for (final Method method : methods) {
-		// System.out.println("method " + i++ + " : " + method);
+		// for (final Type type : types) {
+		// System.out.println("method " + i++ + " : " + type);
 		// }
 
-		// for (Field f : fields) {
-		// System.out.println(f);
-		// }
-		System.out.println(type);
 		System.out.println("findMethodsTakingAsParameter :" + (end - start)
 				+ " msec");
 		System.out.println("Nbr de query effectué : "
