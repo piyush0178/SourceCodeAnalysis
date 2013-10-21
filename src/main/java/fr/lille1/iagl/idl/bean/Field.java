@@ -23,4 +23,10 @@ public class Field extends Member {
 		super(declaringType, type, name);
 	}
 
+	/**
+	 * 
+	 */
+	public Field(){
+		super();
+	}
 }

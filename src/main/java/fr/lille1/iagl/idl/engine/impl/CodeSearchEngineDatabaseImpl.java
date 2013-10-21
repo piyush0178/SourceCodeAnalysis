@@ -152,10 +152,20 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Field> findFieldsTypedWith(final String typeName) {
 		// TODO Auto-generated method stub
-		final String query = "doc('" + filePath + "')//unit/unit/class[name='"
-				+ typeName + "']/block/decl_stmt/decl";
+		try {
+			final XQPreparedExpression preparedQuery = preparedQueries
+					.getFindFieldsTypedWithQuery();
 
-		return null;
+			preparedQuery.bindString(new QName("typeName"), typeName, null);
+			
+			System.out.println(preparedQuery.executeQuery().getSequenceAsString(null));
+
+			return parser.parseFieldsTypedWith(preparedQuery.executeQuery()
+					.getSequenceAsStream(), typeName);
+		} catch (XMLStreamException | XQException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import fr.lille1.iagl.idl.bean.Field;
 import fr.lille1.iagl.idl.bean.Location;
 import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.Type;
@@ -22,14 +23,19 @@ public class QueryAnswerParser {
 	public static final String KIND = "kind";
 	public static final String TYPE = "type";
 	public static final String ERROR = "error";
+	public static final String NAME = "name";
+	public static final String FIELD = "field";
 	public static final String PACKAGE = "package";
 	public static final String LOCATION = "location";
 	public static final String FUNCTION = "function";
 	public static final String TYPE_NAME = "type_name";
+	public static final String CLASS_NAME = "class_name";
 	public static final String LINE_NUMBER = "line_number";
 	public static final String METHOD_NAME = "method_name";
 	public static final String FUNCTION_LIST = "function_list";
 	public static final String PARAMETER_LIST = "parameter_list";
+	public static final String FIELD_LIST = "field_list";
+	
 
 	CodeSearchEngine searchEngine;
 
@@ -175,6 +181,48 @@ public class QueryAnswerParser {
 			}
 		}
 		throw new RuntimeException("This case will never append");
+	}
+	
+	/**
+	 * 
+	 * @param xmlReader
+	 * @return
+	 * @throws XMLStreamException
+	 */
+	public List<Field> parseFieldsTypedWith(final XMLStreamReader xmlReader, final String typeName)
+			throws XMLStreamException {
+		final List<Field> fields = new ArrayList<Field>();
+		Field field = null;
+		final Type declaringType = searchEngine.findType(typeName);
+		Type type = null;
+		while (xmlReader.hasNext()) {
+			xmlReader.next();
+			final int eventType = xmlReader.getEventType();
+			if (eventType == XMLStreamReader.END_ELEMENT ) {
+				switch(xmlReader.getLocalName()){
+				case  FIELD_LIST : 
+					return fields;
+				}
+			}
+			if (eventType == XMLStreamReader.START_ELEMENT) {
+				String localName = xmlReader.getLocalName();
+				switch (localName) {
+					case CLASS_NAME:
+						type = searchEngine.findType(xmlReader
+							.getElementText());
+						break;
+				case NAME:
+						field = new Field();
+						field.setDeclaringType(declaringType);
+						field.setType(type);
+						field.setName(xmlReader.getElementText());
+						fields.add(field);
+						break;
+				}
+				
+			}
+		}
+		return null;
 	}
 
 }

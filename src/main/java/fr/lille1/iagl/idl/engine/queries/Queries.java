@@ -58,4 +58,23 @@ public class Queries {
 			+ " return"
 			+ "		<function_list>{$functions}</function_list>";
 
+	public static final String findFieldsTypedWithQuery = "declare variable $file as xs:string external;"
+			+ " declare variable $typeName as xs:string external;"
+			+ " let $fields := "
+			+ " 	for $class in doc($file)//class[.//block/decl_stmt/decl/type/name = $typeName]"
+			+ " 	 return "
+			+ " 		<class>"
+			+ "  			 <class_name>{ $class/name/text() }</class_name>"
+			+ " 				{"
+			+ " 					for $field in $class//block/decl_stmt/decl[type/name=$typeName]"
+			+ " 					return"
+			+ " 					<field>"
+			+ " 						<type>{ $field/type/name/text() }</type>"
+			+ " 						<name>{ $field/name/text() }</name>"
+			+ " 					</field>"
+			+ " 				}"
+			+ "			 </class>" 
+			+ " return " 
+			+ " <field_list>{$fields}</field_list>";
+
 }
