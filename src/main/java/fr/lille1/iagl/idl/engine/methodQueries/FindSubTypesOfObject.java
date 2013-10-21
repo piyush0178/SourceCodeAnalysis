@@ -8,6 +8,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.xquery.XQConnection;
 
 import fr.lille1.iagl.idl.bean.Type;
+import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 
 /**
@@ -32,17 +33,17 @@ public class FindSubTypesOfObject extends AbstractMethodObject<List<Type>> {
 	}
 
 	@Override
-	protected List<Type> parse(final XMLStreamReader xmlReader)
+	public List<Type> parse(final XMLStreamReader xmlReader)
 			throws XMLStreamException {
 		final List<Type> subTypeList = new ArrayList<Type>();
 		while (xmlReader.hasNext()) {
 			xmlReader.next();
 			final int eventType = xmlReader.getEventType();
 			if (eventType == XMLStreamReader.END_ELEMENT
-					&& EXTENDS.equals(xmlReader.getLocalName())) {
+					&& Constantes.EXTENDS.equals(xmlReader.getLocalName())) {
 				return subTypeList;
 			} else if (eventType == XMLStreamReader.START_ELEMENT
-					&& CLASS.equals(xmlReader.getLocalName())) {
+					&& Constantes.CLASS.equals(xmlReader.getLocalName())) {
 				subTypeList.add(searchEngine.findType(xmlReader
 						.getElementText()));
 			}

@@ -9,12 +9,13 @@ import javax.xml.xquery.XQConnection;
 
 import fr.lille1.iagl.idl.bean.Field;
 import fr.lille1.iagl.idl.bean.Type;
+import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 
 public class FindFieldsTypedWithObject extends
 		AbstractMethodObject<List<Field>> {
 
-	private String typeName;
+	private final String typeName;
 
 	private static String findFieldsTypedWithQuery = declareVariables
 			+ " let $fields := "
@@ -34,12 +35,6 @@ public class FindFieldsTypedWithObject extends
 			+ " <field_list>{$fields}</field_list>"
 			+ "(: Commentaire inutile permettant de garder le formatage du code mm avec ma save action :)";
 
-	public FindFieldsTypedWithObject(XQConnection connection, String filePath,
-			CodeSearchEngine searchEngine) {
-		super(connection, filePath, searchEngine);
-		// TODO Auto-generated constructor stub
-	}
-
 	public FindFieldsTypedWithObject(final XQConnection connection,
 			final String filePath, final CodeSearchEngine searchEngine,
 			final String typeName) {
@@ -49,7 +44,7 @@ public class FindFieldsTypedWithObject extends
 	}
 
 	@Override
-	protected List<Field> parse(XMLStreamReader xmlReader)
+	public List<Field> parse(final XMLStreamReader xmlReader)
 			throws XMLStreamException {
 		final List<Field> fields = new ArrayList<Field>();
 		Field field = null;
@@ -60,16 +55,16 @@ public class FindFieldsTypedWithObject extends
 			final int eventType = xmlReader.getEventType();
 			if (eventType == XMLStreamReader.END_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
-				case FIELD_LIST:
+				case Constantes.FIELD_LIST:
 					return fields;
 				}
 			} else if (eventType == XMLStreamReader.START_ELEMENT) {
 				final String localName = xmlReader.getLocalName();
 				switch (localName) {
-				case CLASS_NAME:
+				case Constantes.CLASS_NAME:
 					type = searchEngine.findType(xmlReader.getElementText());
 					break;
-				case NAME:
+				case Constantes.NAME:
 					field = new Field();
 					field.setDeclaringType(declaringType);
 					field.setType(type);
