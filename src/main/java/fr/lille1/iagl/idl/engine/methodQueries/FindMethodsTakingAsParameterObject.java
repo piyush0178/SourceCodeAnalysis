@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.xquery.XQConnection;
 
+import lombok.Getter;
 import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.constantes.Constantes;
@@ -18,7 +19,8 @@ import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 public class FindMethodsTakingAsParameterObject extends
 		AbstractMethodObject<List<Method>> {
 
-	private final String findMethodsTakingAsParameterQuery = declareVariables
+	@Getter
+	private final String query = declareVariables
 			+ " let $functions := "
 			+ "		for $class in doc($file)//class[//function/parameter_list/param/decl/type/name = $typeName]"
 			+ "		for $function in $class//function[parameter_list/param/decl/type/name = $typeName]"
@@ -49,7 +51,6 @@ public class FindMethodsTakingAsParameterObject extends
 	public FindMethodsTakingAsParameterObject(final XQConnection connection,
 			final String filePath, final CodeSearchEngine searchEngine) {
 		super(connection, filePath, searchEngine);
-		query = findMethodsTakingAsParameterQuery;
 	}
 
 	@Override

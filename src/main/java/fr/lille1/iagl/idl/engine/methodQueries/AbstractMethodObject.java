@@ -22,11 +22,6 @@ public abstract class AbstractMethodObject<T> {
 	protected String filePath;
 	final CodeSearchEngine searchEngine;
 
-	/**
-	 * Doit être redéfinit.
-	 */
-	protected String query;
-
 	@Getter
 	protected XQPreparedExpression preparedQuery;
 
@@ -63,11 +58,13 @@ public abstract class AbstractMethodObject<T> {
 	 * @throws XQException
 	 */
 	private void prepareQuery() throws XQException {
-		if (query == null) {
+		if (getQuery() == null) {
 			throw new RuntimeException("You have to redefine the query field !");
 		}
-		preparedQuery = connection.prepareExpression(query);
+		preparedQuery = connection.prepareExpression(getQuery());
 		preparedQuery.bindString(new QName("file"), filePath, null);
 	}
+
+	protected abstract String getQuery();
 
 }

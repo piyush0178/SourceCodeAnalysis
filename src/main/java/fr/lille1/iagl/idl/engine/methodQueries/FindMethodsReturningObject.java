@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.xquery.XQConnection;
 
+import lombok.Getter;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
@@ -18,7 +19,8 @@ import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 public class FindMethodsReturningObject extends
 		AbstractMethodObject<List<Type>> {
 
-	private final String myQuery = declareVariables;
+	@Getter
+	private final String query = declareVariables;
 
 	/**
 	 * Constructor
@@ -30,7 +32,6 @@ public class FindMethodsReturningObject extends
 	public FindMethodsReturningObject(final XQConnection connection,
 			final String filePath, final CodeSearchEngine searchEngine) {
 		super(connection, filePath, searchEngine);
-		query = myQuery;
 	}
 
 	@Override

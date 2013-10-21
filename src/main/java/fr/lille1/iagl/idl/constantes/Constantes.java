@@ -31,4 +31,6 @@ public class Constantes {
 	public static final String PARAMETER_LIST = "parameter_list";
 	public static final String FIELD_LIST = "field_list";
 
+	public static final String TYPE_NAME_XQUERY = "typeName";
+
 }

@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.xquery.XQConnection;
 
+import lombok.Getter;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
@@ -17,7 +18,8 @@ import fr.lille1.iagl.idl.engine.CodeSearchEngine;
  */
 public class FindSubTypesOfObject extends AbstractMethodObject<List<Type>> {
 
-	private final String findSubTypesOfQuery = declareVariables
+	@Getter
+	private final String query = declareVariables
 			+ " let $results :="
 			+ "		for $class in doc($file)//class[super/extends/name = $typeName]"
 			+ " 	return"
@@ -26,10 +28,16 @@ public class FindSubTypesOfObject extends AbstractMethodObject<List<Type>> {
 			+ "		<extends>{$results}</extends>"
 			+ "(: Commentaire inutile permettant de garder le formatage du code mm avec ma save action :)";
 
+	/**
+	 * Constructor
+	 * 
+	 * @param connection
+	 * @param filePath
+	 * @param searchEngine
+	 */
 	public FindSubTypesOfObject(final XQConnection connection,
 			final String filePath, final CodeSearchEngine searchEngine) {
 		super(connection, filePath, searchEngine);
-		query = findSubTypesOfQuery;
 	}
 
 	@Override

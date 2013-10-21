@@ -95,8 +95,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 			final XQPreparedExpression findTypePreparedQuery = findTypeObject
 					.getPreparedQuery();
-			findTypePreparedQuery.bindString(new QName(Constantes.TYPE_NAME),
-					typeName, null);
+			findTypePreparedQuery.bindString(new QName(
+					Constantes.TYPE_NAME_XQUERY), typeName, null);
 			final XMLStreamReader xmlReader = findTypePreparedQuery
 					.executeQuery().getSequenceAsStream();
 
@@ -152,14 +152,14 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 		try {
 			if (findSubTypesOfObject == null) {
 				findSubTypesOfObject = new FindSubTypesOfObject(connection,
-						typeName, this);
+						filePath, this);
 			}
 
 			final XQPreparedExpression preparedQuery = findSubTypesOfObject
 					.getPreparedQuery();
 
-			preparedQuery.bindString(new QName(Constantes.TYPE_NAME), typeName,
-					null);
+			preparedQuery.bindString(new QName(Constantes.TYPE_NAME_XQUERY),
+					typeName, null);
 
 			return findSubTypesOfObject.parse(preparedQuery.executeQuery()
 					.getSequenceAsStream());
@@ -182,8 +182,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			final XQPreparedExpression preparedQuery = findFieldsTypedWithObject
 					.getPreparedQuery();
 
-			preparedQuery.bindString(new QName(Constantes.TYPE_NAME), typeName,
-					null);
+			preparedQuery.bindString(new QName(Constantes.TYPE_NAME_XQUERY),
+					typeName, null);
 
 			// TODO RAL : Supprimer
 			System.out.println(preparedQuery.executeQuery()
@@ -237,8 +237,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			final XQPreparedExpression preparedQuery = findMethodsTakingAsParameterObject
 					.getPreparedQuery();
 
-			preparedQuery.bindString(new QName(Constantes.TYPE_NAME), typeName,
-					null);
+			preparedQuery.bindString(new QName(Constantes.TYPE_NAME_XQUERY),
+					typeName, null);
 
 			return findMethodsTakingAsParameterObject.parse(preparedQuery
 					.executeQuery().getSequenceAsStream());

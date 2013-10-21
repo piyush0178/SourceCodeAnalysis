@@ -4,6 +4,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.xquery.XQConnection;
 
+import lombok.Getter;
 import fr.lille1.iagl.idl.bean.Location;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.bean.TypeKind;
@@ -18,7 +19,8 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 
 	private final String typeName;
 
-	private final String findTypeQuery = declareVariables
+	@Getter
+	private final String query = declareVariables
 			+ "	let $result :="
 			+ " 	for $unit in doc($file)//unit[class/name = $typeName]"
 			+ " 	return"
@@ -50,7 +52,6 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 			final CodeSearchEngine searchEngine, final String typeName) {
 		super(connection, filePath, searchEngine);
 		this.typeName = typeName;
-		query = findTypeQuery;
 	}
 
 	@Override

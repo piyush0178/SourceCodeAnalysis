@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.xquery.XQConnection;
 
+import lombok.Getter;
 import fr.lille1.iagl.idl.bean.Field;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.constantes.Constantes;
@@ -17,7 +18,8 @@ public class FindFieldsTypedWithObject extends
 
 	private final String typeName;
 
-	private static String findFieldsTypedWithQuery = declareVariables
+	@Getter
+	private final String query = declareVariables
 			+ " let $fields := "
 			+ " 	for $class in doc($file)//class[.//block/decl_stmt/decl/type/name = $typeName]"
 			+ " 	 return "
@@ -48,7 +50,6 @@ public class FindFieldsTypedWithObject extends
 			final String typeName) {
 		super(connection, filePath, searchEngine);
 		this.typeName = typeName;
-		query = findFieldsTypedWithQuery;
 	}
 
 	@Override
