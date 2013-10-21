@@ -39,11 +39,6 @@ public abstract class AbstractMethodObject<T> {
 	 */
 	public AbstractMethodObject(final XQConnection connection,
 			final String filePath, final CodeSearchEngine searchEngine) {
-
-		if (query == null) {
-			throw new RuntimeException("You have to redefine the query field !");
-		}
-
 		this.connection = connection;
 		this.filePath = filePath;
 		this.searchEngine = searchEngine;
@@ -68,6 +63,9 @@ public abstract class AbstractMethodObject<T> {
 	 * @throws XQException
 	 */
 	private void prepareQuery() throws XQException {
+		if (query == null) {
+			throw new RuntimeException("You have to redefine the query field !");
+		}
 		preparedQuery = connection.prepareExpression(query);
 		preparedQuery.bindString(new QName("file"), filePath, null);
 	}
