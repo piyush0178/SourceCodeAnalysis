@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<field_list>
+	<class>
+		<class_name>ZipInputStream</class_name>
+		<field>
+			<name>fileEncoding</name>
+		</field>
+		<field>
+			<name>name</name>
+		</field>
+		<field>
+			<name>altEncoding</name>
+		</field>
+	</class>
+</field_list>

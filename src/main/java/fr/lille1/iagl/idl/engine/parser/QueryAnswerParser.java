@@ -217,6 +217,7 @@ public class QueryAnswerParser {
 	 */
 	public List<Field> parseFieldsTypedWith(final XMLStreamReader xmlReader,
 			final String typeName) throws XMLStreamException {
+
 		final List<Field> fields = new ArrayList<Field>();
 		Field field = null;
 		final Type declaringType = searchEngine.findType(typeName);
