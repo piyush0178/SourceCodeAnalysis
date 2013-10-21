@@ -76,9 +76,9 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 		}
 		try {
 			if (findTypeObject == null) {
-				findTypeObject = new FindTypeObject(connection, filePath, this,
-						typeName);
+				findTypeObject = new FindTypeObject(connection, filePath, this);
 			}
+			findTypeObject.setTypeName(typeName);
 
 			// Gestion des types primitifs
 			if (JavaKeyword.getPrimitiveType(typeName) != null) {
@@ -176,8 +176,9 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 		try {
 			if (findFieldsTypedWithObject == null) {
 				findFieldsTypedWithObject = new FindFieldsTypedWithObject(
-						connection, filePath, this, typeName);
+						connection, filePath, this);
 			}
+			findFieldsTypedWithObject.setTypeName(typeName);
 
 			final XQPreparedExpression preparedQuery = findFieldsTypedWithObject
 					.getPreparedQuery();

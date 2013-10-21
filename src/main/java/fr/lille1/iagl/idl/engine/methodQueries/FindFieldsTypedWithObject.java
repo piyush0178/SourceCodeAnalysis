@@ -8,6 +8,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.xquery.XQConnection;
 
 import lombok.Getter;
+import lombok.Setter;
 import fr.lille1.iagl.idl.bean.Field;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.constantes.Constantes;
@@ -16,7 +17,8 @@ import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 public class FindFieldsTypedWithObject extends
 		AbstractMethodObject<List<Field>> {
 
-	private final String typeName;
+	@Setter
+	private String typeName;
 
 	@Getter
 	private final String query = declareVariables
@@ -46,10 +48,8 @@ public class FindFieldsTypedWithObject extends
 	 * @param typeName
 	 */
 	public FindFieldsTypedWithObject(final XQConnection connection,
-			final String filePath, final CodeSearchEngine searchEngine,
-			final String typeName) {
+			final String filePath, final CodeSearchEngine searchEngine) {
 		super(connection, filePath, searchEngine);
-		this.typeName = typeName;
 	}
 
 	@Override

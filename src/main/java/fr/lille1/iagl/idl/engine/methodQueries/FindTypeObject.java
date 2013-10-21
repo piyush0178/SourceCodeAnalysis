@@ -5,6 +5,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.xquery.XQConnection;
 
 import lombok.Getter;
+import lombok.Setter;
 import fr.lille1.iagl.idl.bean.Location;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.bean.TypeKind;
@@ -17,7 +18,8 @@ import fr.lille1.iagl.idl.engine.CodeSearchEngine;
  */
 public class FindTypeObject extends AbstractMethodObject<Type> {
 
-	private final String typeName;
+	@Setter
+	private String typeName;
 
 	@Getter
 	private final String query = declareVariables
@@ -49,9 +51,8 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 			+ "		else $result";
 
 	public FindTypeObject(final XQConnection connection, final String filePath,
-			final CodeSearchEngine searchEngine, final String typeName) {
+			final CodeSearchEngine searchEngine) {
 		super(connection, filePath, searchEngine);
-		this.typeName = typeName;
 	}
 
 	@Override
