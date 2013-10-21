@@ -34,5 +34,6 @@ public class Constantes {
 	public static final String TYPE_NAME_XQUERY = "typeName";
 	public static final String RETURN = "return";
 	public static final String PARAMETER = "parameter";
+	public static final String LOCATIONS = "locations";
 
 }

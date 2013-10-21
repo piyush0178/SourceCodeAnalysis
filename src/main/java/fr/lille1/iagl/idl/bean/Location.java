@@ -22,4 +22,19 @@ public class Location implements Serializable {
 	 */
 	private int lineNumber;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param filePath
+	 */
+	public Location(final String filePath) {
+		this.filePath = filePath;
+	}
+
+	/**
+	 * Empty constructor
+	 */
+	public Location() {
+		// empty constructor
+	}
 }
