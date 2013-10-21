@@ -27,6 +27,7 @@ import fr.lille1.iagl.idl.engine.methodQueries.FindMethodThrowingObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindMethodsOfObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindMethodsReturningObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindMethodsTakingAsParameterObject;
+import fr.lille1.iagl.idl.engine.methodQueries.FindNewOfObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindSubTypesOfObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindTypeObject;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
@@ -50,6 +51,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	private FindMethodsTakingAsParameterObject findMethodsTakingAsParameterObject;
 	private FindFieldsTypedWithObject findFieldsTypedWithObject;
 	private FindMethodsOfObject findMethodsOfObject;
+	private FindNewOfObject findNewOfObject;
 	private FindMethodThrowingObject findMethodsThrowingObject;
 	private FindMethodsReturningObject findMethodsReturningObject;
 
@@ -131,8 +133,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			return typeResult;
 
 		} catch (final XQException | XMLStreamException | CacheException e) {
-			throw new RuntimeException("ERREUR : findType( " + typeName
-					+ " ) : " + e.getMessage(), e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -164,8 +165,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 					.getSequenceAsStream());
 
 		} catch (final XQException | XMLStreamException e) {
-			throw new RuntimeException("ERREUR : findSubTypesOf( " + typeName
-					+ " ) : " + e.getMessage(), e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -245,8 +245,8 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			preparedQuery.bindString(new QName(Constantes.TYPE_NAME_XQUERY),
 					typeName, null);
 
-			return findMethodsReturningObject.parse(preparedQuery.executeQuery()
-					.getSequenceAsStream());
+			return findMethodsReturningObject.parse(preparedQuery
+					.executeQuery().getSequenceAsStream());
 
 		} catch (final XQException | XMLStreamException e) {
 			throw new RuntimeException("ERREUR : findMethodsReturning( "
@@ -274,9 +274,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 					.executeQuery().getSequenceAsStream());
 
 		} catch (final XQException | XMLStreamException e) {
-			throw new RuntimeException(
-					"ERREUR : findMethodsTakingAsParameter( " + typeName
-							+ " ) : " + e.getMessage(), e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -294,8 +292,24 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	@Override
 	public List<Location> findNewOf(final String className) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			if (findNewOfObject == null) {
+				findNewOfObject = new FindNewOfObject(connection, filePath,
+						this);
+			}
+
+			final XQPreparedExpression preparedQuery = findNewOfObject
+					.getPreparedQuery();
+
+			preparedQuery.bindString(new QName(Constantes.TYPE_NAME_XQUERY),
+					className, null);
+
+			return findNewOfObject.parse(preparedQuery.executeQuery()
+					.getSequenceAsStream());
+
+		} catch (final XQException | XMLStreamException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
