@@ -155,10 +155,9 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 		try {
 			final XQPreparedExpression preparedQuery = preparedQueries
 					.getFindFieldsTypedWithQuery();
-
 			preparedQuery.bindString(new QName("typeName"), typeName, null);
-			
-			System.out.println(preparedQuery.executeQuery().getSequenceAsString(null));
+			System.out.println(preparedQuery.executeQuery()
+					.getSequenceAsString(null));
 
 			return parser.parseFieldsTypedWith(preparedQuery.executeQuery()
 					.getSequenceAsStream(), typeName);

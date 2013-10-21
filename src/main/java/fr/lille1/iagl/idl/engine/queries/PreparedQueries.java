@@ -31,7 +31,7 @@ public class PreparedQueries {
 	 */
 	@Getter
 	private XQPreparedExpression findMethodsTakingAsParameterQuery;
-	
+
 	/**
 	 * Prepared query of the findFieldsTypedWithQuery() method.<br>
 	 */
@@ -44,7 +44,7 @@ public class PreparedQueries {
 		try {
 			prepareFindTypeQuery(connection, filePath);
 			prepareFindMethodsTakingAsParameterQuery(connection, filePath);
-			prepareFindFieldTypedWith(connection, filePath);
+			prepareFindFieldsTypedWithQuery(connection, filePath);
 
 		} catch (final XQException e) {
 			throw new RuntimeException(
@@ -79,9 +79,16 @@ public class PreparedQueries {
 		findTypePreparedQuery.bindString(new QName("file"), filePath, null);
 	}
 
-	private void prepareFindFieldTypedWith(final XQConnection connection, final String filePath) throws XQException{
+	/**
+	 * @param connection
+	 * @param filePath
+	 * @throws XQException
+	 */
+	private void prepareFindFieldsTypedWithQuery(final XQConnection connection,
+			final String filePath) throws XQException {
 		findTypePreparedQuery = connection
 				.prepareExpression(Queries.findFieldsTypedWithQuery);
+
 		findTypePreparedQuery.bindString(new QName("file"), filePath, null);
 	}
 }

@@ -69,12 +69,11 @@ public class Queries {
 			+ " 					for $field in $class//block/decl_stmt/decl[type/name=$typeName]"
 			+ " 					return"
 			+ " 					<field>"
-			+ " 						<type>{ $field/type/name/text() }</type>"
 			+ " 						<name>{ $field/name/text() }</name>"
 			+ " 					</field>"
 			+ " 				}"
-			+ "			 </class>" 
-			+ " return " 
+			+ "			 </class>"
+			+ " return "
 			+ " <field_list>{$fields}</field_list>";
 
 }
