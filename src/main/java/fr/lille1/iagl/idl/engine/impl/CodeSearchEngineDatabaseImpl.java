@@ -23,6 +23,7 @@ import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.constantes.JavaKeyword;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.engine.methodQueries.FindFieldsTypedWithObject;
+import fr.lille1.iagl.idl.engine.methodQueries.FindMethodThrowingObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindMethodsOfObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindMethodsTakingAsParameterObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindSubTypesOfObject;
@@ -48,6 +49,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	private FindMethodsTakingAsParameterObject findMethodsTakingAsParameterObject;
 	private FindFieldsTypedWithObject findFieldsTypedWithObject;
 	private FindMethodsOfObject findMethodsOfObject;
+	private FindMethodThrowingObject findMethodsThrowingObject;
 
 	public CodeSearchEngineDatabaseImpl(final XQConnection connection,
 			final String filePath) {
@@ -66,7 +68,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 							+ e.getMessage(), e);
 		}
 
-		initialize();
 	}
 
 	private void initialize() {
@@ -292,8 +293,25 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 	@Override
 	public List<Method> findMethodsThrowing(final String exceptionName) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			if (findMethodsThrowingObject == null) {
+				findMethodsThrowingObject = new FindMethodThrowingObject(
+						connection, filePath, this);
+			}
+			findMethodsThrowingObject.setTypeName(exceptionName);
+
+			final XQPreparedExpression preparedQuery = findMethodsThrowingObject
+					.getPreparedQuery();
+
+			preparedQuery.bindString(new QName(Constantes.TYPE_NAME_XQUERY),
+					exceptionName, null);
+
+			return findMethodsThrowingObject.parse(preparedQuery.executeQuery()
+					.getSequenceAsStream());
+
+		} catch (XMLStreamException | XQException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
