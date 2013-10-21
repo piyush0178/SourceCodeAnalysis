@@ -58,8 +58,7 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 	@Override
 	public Type parse(final XMLStreamReader xmlReader)
 			throws XMLStreamException {
-		final Type typeRes = new Type();
-		typeRes.setName(typeName);
+		Type typeRes = null;
 		while (xmlReader.hasNext()) {
 			xmlReader.next();
 			final int eventType = xmlReader.getEventType();
@@ -68,6 +67,13 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 				return typeRes;
 			} else if (eventType == XMLStreamReader.START_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
+				case Constantes.ERROR:
+					// la base de donnée n'a rien répondu
+					return null;
+				case Constantes.TYPE:
+					typeRes = new Type();
+					typeRes.setName(typeName);
+					break;
 				case Constantes.LOCATION:
 					typeRes.setDeclaration(parseLocation(xmlReader));
 					break;
