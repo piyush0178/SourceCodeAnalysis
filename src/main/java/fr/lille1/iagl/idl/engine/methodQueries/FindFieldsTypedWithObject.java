@@ -34,12 +34,6 @@ public class FindFieldsTypedWithObject extends
 			+ " <field_list>{$fields}</field_list>"
 			+ "(: Commentaire inutile permettant de garder le formatage du code mm avec ma save action :)";
 
-	public FindFieldsTypedWithObject(XQConnection connection, String filePath,
-			CodeSearchEngine searchEngine) {
-		super(connection, filePath, searchEngine);
-		// TODO Auto-generated constructor stub
-	}
-
 	public FindFieldsTypedWithObject(final XQConnection connection,
 			final String filePath, final CodeSearchEngine searchEngine,
 			final String typeName) {
