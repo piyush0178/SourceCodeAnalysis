@@ -1,6 +1,3 @@
-/**
- * 
- */
 package fr.lille1.iagl.idl.main;
 
 import fr.lille1.iagl.idl.bean.Type;
