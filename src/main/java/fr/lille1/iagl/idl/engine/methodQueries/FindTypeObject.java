@@ -1,4 +1,4 @@
-package fr.lille1.iagl.idl.engine.test;
+package fr.lille1.iagl.idl.engine.methodQueries;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;

@@ -1,4 +1,4 @@
-package fr.lille1.iagl.idl.engine.test;
+package fr.lille1.iagl.idl.engine.methodQueries;
 
 import java.util.ArrayList;
 import java.util.List;
