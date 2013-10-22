@@ -18,33 +18,31 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-		final CodeSearchEngine engine = new CodeSearchEngineDatabaseImpl(
-				DatabaseConnection.getConnection(), Constantes.JAVA_XML);
+		long start;
+		long end;
 
-		long start, end;
+		List<Method> methods = null;
 
 		start = System.currentTimeMillis();
+
+		final CodeSearchEngine engine = new CodeSearchEngineDatabaseImpl(
+				DatabaseConnection.getConnection(), Constantes.JAVA_XML);
 
 		// final Type type = engine.findType("File");
 		// final Type type = engine.findType("File");
 		// final List<Field> types = engine.findFieldsTypedWith("String");
-		final List<Method> methods = engine
-				.findMethodsTakingAsParameter("ObjectInputStream");
+		methods = engine.findMethodsTakingAsParameter("ObjectInputStream");
 		// final Type type = engine.findType("void");
 		// final Type type = engine.findType("ObjectInputStream");
-		end = System.currentTimeMillis();
 
 		// System.out.println("type : " + type);
-		int i = 0;
-		for (final Method type1 : methods) {
-			System.out.println("method " + i++ + " : " + type1);
-		}
+		DatabaseConnection.closeConnection();
+
+		end = System.currentTimeMillis();
 
 		System.out.println("findMethodsTakingAsParameter :" + (end - start)
 				+ " msec");
-		System.out.println("Nbr de query effectué : "
-				+ CodeSearchEngineDatabaseImpl.cpt);
-		DatabaseConnection.closeConnection();
 
+		System.out.println("methods.size() : " + methods.size());
 	}
 }
