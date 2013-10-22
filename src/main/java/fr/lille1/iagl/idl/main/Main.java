@@ -1,8 +1,6 @@
 package fr.lille1.iagl.idl.main;
 
-import java.util.List;
-
-import fr.lille1.iagl.idl.bean.Method;
+import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 import fr.lille1.iagl.idl.engine.impl.CodeSearchEngineDatabaseImpl;
@@ -21,17 +19,18 @@ public class Main {
 		long start;
 		long end;
 
-		List<Method> methods = null;
+		// List<Method> methods = null;
+		Type type;
 
 		start = System.currentTimeMillis();
 
 		final CodeSearchEngine engine = new CodeSearchEngineDatabaseImpl(
-				DatabaseConnection.getConnection(), Constantes.JAVA_XML);
+				DatabaseConnection.getConnection(), Constantes.COMMONS_3_XML);
 
 		// final Type type = engine.findType("File");
 		// final Type type = engine.findType("File");
 		// final List<Field> types = engine.findFieldsTypedWith("String");
-		methods = engine.findMethodsTakingAsParameter("ObjectInputStream");
+		type = engine.findType("AVLNode");
 		// final Type type = engine.findType("void");
 		// final Type type = engine.findType("ObjectInputStream");
 
@@ -43,6 +42,6 @@ public class Main {
 		System.out.println("findMethodsTakingAsParameter :" + (end - start)
 				+ " msec");
 
-		System.out.println("methods.size() : " + methods.size());
+		System.out.println("methods.size() : " + type);
 	}
 }

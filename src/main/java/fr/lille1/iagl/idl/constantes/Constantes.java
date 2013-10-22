@@ -12,6 +12,9 @@ public class Constantes {
 	public static final String LUCENE_XML = USER_DIR
 			+ "/src/main/resources/xml/lucene.xml";
 
+	public static final String COMMONS_3_XML = USER_DIR
+			+ "/src/main/resources/xml/org.apache.commons.collections-3.1.xml";
+
 	public static final String EXTENDS = "extends";
 	public static final String CLASS = "class";
 	public static final String PATH = "path";

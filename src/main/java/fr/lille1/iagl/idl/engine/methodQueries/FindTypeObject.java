@@ -21,9 +21,7 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 	@Getter
 	private final String query = findTypeMethod
 			+ "	let $result := local:findType(doc($file), $typeName)"
-			+ "	return"
-			+ "		if(count($result) eq 0) then <error>The query returned nothing</error>"
-			+ "		else $result";
+			+ "	return $result";
 
 	public FindTypeObject(final XQConnection connection, final String filePath,
 			final CodeSearchEngine searchEngine) {
