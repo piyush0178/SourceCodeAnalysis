@@ -31,35 +31,49 @@ import fr.lille1.iagl.idl.engine.methodQueries.FindNewOfObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindSubTypesOfObject;
 import fr.lille1.iagl.idl.engine.methodQueries.FindTypeObject;
 import fr.lille1.iagl.idl.exception.WillNeverBeImplementedMethodException;
+import fr.lille1.iagl.idl.utils.DatabaseConnection;
 
 public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
-	XQConnection connection;
-
-	String filePath;
+	final XQConnection connection;
+	final String filePath;
 
 	/**
 	 * cache de résultat des queries
 	 */
-	public static JCS cache;
+	public final JCS cache;
 
 	// TODO JIV : supprimer
 	public static int cpt = 0;
 
-	private FindTypeObject findTypeObject;
-	private FindSubTypesOfObject findSubTypesOfObject;
-	private FindMethodsTakingAsParameterObject findMethodsTakingAsParameterObject;
-	private FindFieldsTypedWithObject findFieldsTypedWithObject;
-	private FindMethodsOfObject findMethodsOfObject;
-	private FindNewOfObject findNewOfObject;
-	private FindMethodThrowingObject findMethodsThrowingObject;
-	private FindMethodsReturningObject findMethodsReturningObject;
+	private final FindTypeObject findTypeObject;
+	private final FindSubTypesOfObject findSubTypesOfObject;
+	private final FindMethodsTakingAsParameterObject findMethodsTakingAsParameterObject;
+	private final FindFieldsTypedWithObject findFieldsTypedWithObject;
+	private final FindMethodsOfObject findMethodsOfObject;
+	private final FindNewOfObject findNewOfObject;
+	private final FindMethodThrowingObject findMethodsThrowingObject;
+	private final FindMethodsReturningObject findMethodsReturningObject;
 
 	public CodeSearchEngineDatabaseImpl(final XQConnection connection,
 			final String filePath) {
 		if (connection == null || StringUtils.isEmpty(filePath)) {
 			throw new RuntimeException("Il manque des paramètre !");
 		}
+		findTypeObject = new FindTypeObject(connection, filePath, this);
+		findSubTypesOfObject = new FindSubTypesOfObject(connection, filePath,
+				this);
+		findFieldsTypedWithObject = new FindFieldsTypedWithObject(connection,
+				filePath, this);
+		findMethodsOfObject = new FindMethodsOfObject(connection, filePath,
+				this);
+		findMethodsReturningObject = new FindMethodsReturningObject(connection,
+				filePath, this);
+		findMethodsTakingAsParameterObject = new FindMethodsTakingAsParameterObject(
+				connection, filePath, this);
+		findNewOfObject = new FindNewOfObject(connection, filePath, this);
+		findMethodsThrowingObject = new FindMethodThrowingObject(connection,
+				filePath, this);
 
 		this.connection = connection;
 		this.filePath = filePath;
@@ -84,11 +98,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			return typeCached;
 		}
 		try {
-			if (findTypeObject == null) {
-				findTypeObject = new FindTypeObject(connection, filePath, this);
-			}
-			findTypeObject.setTypeName(typeName);
-
 			// Gestion des types primitifs
 			if (JavaKeyword.getPrimitiveType(typeName) != null) {
 				final PrimitiveType primitiveTypeCached = new PrimitiveType(
@@ -97,10 +106,18 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 				return primitiveTypeCached;
 			}
 
-			// FIXME : Pour l'instant dans la requète je ne gére que les class,
-			// enum, interface et les primitives. Il manque les exceptions et
+			final DatabaseConnection datasource = new DatabaseConnection();
+			final FindTypeObject findTypeObject = new FindTypeObject(
+					datasource.getConnection(), filePath, this);
+			findTypeObject.setTypeName(typeName);
+
+			// FIXME : Pour l'instant dans la requète je ne gére que les
+			// class,
+			// enum, interface et les primitives. Il manque les
+			// exceptions et
 			// annotations.
-			// FIXME : Je ne gére pas encore les numéros de lignes dans Location
+			// FIXME : Je ne gére pas encore les numéros de lignes dans
+			// Location
 
 			final XQPreparedExpression findTypePreparedQuery = findTypeObject
 					.getPreparedQuery();
@@ -110,13 +127,12 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			final XMLStreamReader xmlReader = findTypePreparedQuery
 					.executeQuery().getSequenceAsStream();
 
-			cpt++;
-
 			Type typeResult = findTypeObject.parse(xmlReader);
 			if (typeResult == null) {
 				typeResult = new UnknowType(typeName);
 			}
 			cache.put(typeName, typeResult);
+			datasource.closeConnection();
 			return typeResult;
 
 		} catch (final XQException | XMLStreamException | CacheException e) {
@@ -137,11 +153,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Type> findSubTypesOf(final String typeName) {
 		try {
-			if (findSubTypesOfObject == null) {
-				findSubTypesOfObject = new FindSubTypesOfObject(connection,
-						filePath, this);
-			}
-
 			final XQPreparedExpression preparedQuery = findSubTypesOfObject
 					.getPreparedQuery();
 
@@ -159,10 +170,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Field> findFieldsTypedWith(final String typeName) {
 		try {
-			if (findFieldsTypedWithObject == null) {
-				findFieldsTypedWithObject = new FindFieldsTypedWithObject(
-						connection, filePath, this);
-			}
 			findFieldsTypedWithObject.setTypeName(typeName);
 
 			final XQPreparedExpression preparedQuery = findFieldsTypedWithObject
@@ -194,10 +201,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Method> findMethodsOf(final String typeName) {
 		try {
-			if (findMethodsOfObject == null) {
-				findMethodsOfObject = new FindMethodsOfObject(connection,
-						filePath, this);
-			}
 			findMethodsOfObject.setTypeName(typeName);
 
 			final XQPreparedExpression preparedQuery = findMethodsOfObject
@@ -221,11 +224,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Method> findMethodsReturning(final String typeName) {
 		try {
-			if (findMethodsReturningObject == null) {
-				findMethodsReturningObject = new FindMethodsReturningObject(
-						connection, filePath, this);
-			}
-
 			final XQPreparedExpression preparedQuery = findMethodsReturningObject
 					.getPreparedQuery();
 
@@ -246,11 +244,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Method> findMethodsTakingAsParameter(final String typeName) {
 		try {
-			if (findMethodsTakingAsParameterObject == null) {
-				findMethodsTakingAsParameterObject = new FindMethodsTakingAsParameterObject(
-						connection, filePath, this);
-			}
-
 			final XQPreparedExpression preparedQuery = findMethodsTakingAsParameterObject
 					.getPreparedQuery();
 
@@ -280,11 +273,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Location> findNewOf(final String className) {
 		try {
-			if (findNewOfObject == null) {
-				findNewOfObject = new FindNewOfObject(connection, filePath,
-						this);
-			}
-
 			final XQPreparedExpression preparedQuery = findNewOfObject
 					.getPreparedQuery();
 
@@ -314,10 +302,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 	@Override
 	public List<Method> findMethodsThrowing(final String exceptionName) {
 		try {
-			if (findMethodsThrowingObject == null) {
-				findMethodsThrowingObject = new FindMethodThrowingObject(
-						connection, filePath, this);
-			}
 			findMethodsThrowingObject.setTypeName(exceptionName);
 
 			final XQPreparedExpression preparedQuery = findMethodsThrowingObject

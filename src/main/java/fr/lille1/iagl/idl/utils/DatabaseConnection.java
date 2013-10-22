@@ -12,20 +12,15 @@ import net.xqj.basex.BaseXXQDataSource;
  */
 public class DatabaseConnection {
 
-	/**
-	 * Singleton
-	 */
-	@SuppressWarnings("unused")
-	private final static DatabaseConnection dbConnection = new DatabaseConnection();
-
 	private static XQConnection connection;
 
-	private DatabaseConnection() {
-		final XQDataSource dataSource = new BaseXXQDataSource();
+	private static XQDataSource dataSource;
+
+	public DatabaseConnection() {
+		dataSource = new BaseXXQDataSource();
 		try {
 			dataSource.setProperty("serverName", "localhost");
 			dataSource.setProperty("port", "1984");
-			connection = dataSource.getConnection("admin", "admin");
 		} catch (final XQException e) {
 			throw new RuntimeException(e);
 		}
@@ -33,15 +28,20 @@ public class DatabaseConnection {
 
 	/**
 	 * @return the xConnection
+	 * @throws XQException
 	 */
-	public static XQConnection getConnection() {
-		return connection;
+	public XQConnection getConnection() {
+		try {
+			return dataSource.getConnection("admin", "admin");
+		} catch (final XQException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
 	 * Ferme la connexion.
 	 */
-	public static void closeConnection() {
+	public void closeConnection() {
 		try {
 			if (connection != null) {
 				connection.close();

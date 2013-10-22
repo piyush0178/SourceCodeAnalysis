@@ -21,7 +21,7 @@ public class FindMethodsTakingAsParameterObject extends
 			+ " <function_list> "
 			+ "	{"
 			+ "		for $class in doc($file)//class[//function/parameter_list/param/decl/type/name = $typeName]"
-			+ "		for $function in $class/function[parameter_list/param/decl/type/name = $typeName]"
+			+ "		for $function in $class//function[parameter_list/param/decl/type/name = $typeName]"
 			+ " 	return"
 			+ " 	<function>"
 			+ "			<class>{$class/name/text()}</class>"
@@ -36,7 +36,7 @@ public class FindMethodsTakingAsParameterObject extends
 			+ "			</parameter_list>"
 			+ "		</function>"
 			+ "	}"
-			+ "	<function_list>"
+			+ "	</function_list>"
 			+ "(: Commentaire inutile permettant de garder le formatage du code mm avec ma save action :)";
 
 	/**

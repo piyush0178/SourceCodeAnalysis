@@ -56,16 +56,13 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 	}
 
 	@Override
-	public Type parse(final XMLStreamReader xmlReader)
+	public synchronized Type parse(final XMLStreamReader xmlReader)
 			throws XMLStreamException {
 		Type typeRes = null;
 		while (xmlReader.hasNext()) {
 			xmlReader.next();
 			final int eventType = xmlReader.getEventType();
-			if (eventType == XMLStreamReader.END_ELEMENT
-					&& Constantes.TYPE.equals(xmlReader.getLocalName())) {
-				return typeRes;
-			} else if (eventType == XMLStreamReader.START_ELEMENT) {
+			if (eventType == XMLStreamReader.START_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
 				case Constantes.ERROR:
 					// la base de donnée n'a rien répondu
@@ -86,6 +83,9 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 							.toUpperCase()));
 					break;
 				}
+			} else if (eventType == XMLStreamReader.END_ELEMENT
+					&& Constantes.TYPE.equals(xmlReader.getLocalName())) {
+				return typeRes;
 			}
 		}
 		throw new RuntimeException("This case will never append");

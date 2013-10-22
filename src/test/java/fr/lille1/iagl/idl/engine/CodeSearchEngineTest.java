@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import fr.lille1.iagl.idl.bean.Location;
 import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.bean.UnknowType;
@@ -136,7 +137,9 @@ public class CodeSearchEngineTest {
 
 	@Test
 	public void testFindNewOf() throws Exception {
-		throw new RuntimeException("not yet implemented");
+		final List<Location> locations = engine.findNewOf("IOException");
+		Assert.assertNotNull(locations);
+		Assert.assertEquals(45, locations.size());
 	}
 
 	@Test

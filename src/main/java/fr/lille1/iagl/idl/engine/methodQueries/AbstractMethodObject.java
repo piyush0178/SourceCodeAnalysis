@@ -2,6 +2,11 @@ package fr.lille1.iagl.idl.engine.methodQueries;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -24,9 +29,11 @@ public abstract class AbstractMethodObject<T> {
 	public final static String declareVariables = "declare variable $file as xs:string external;"
 			+ " declare variable $typeName as xs:string external;";
 
-	protected XQConnection connection;
-	protected String filePath;
-	final CodeSearchEngine searchEngine;
+	protected final XQConnection connection;
+	protected final String filePath;
+	protected final CodeSearchEngine searchEngine;
+
+	private final ExecutorService executor = Executors.newFixedThreadPool(100);
 
 	@Getter
 	protected XQPreparedExpression preparedQuery;
@@ -43,11 +50,7 @@ public abstract class AbstractMethodObject<T> {
 		this.connection = connection;
 		this.filePath = filePath;
 		this.searchEngine = searchEngine;
-		try {
-			prepareQuery();
-		} catch (final XQException e) {
-			throw new RuntimeException("ERREUR : " + e.getMessage(), e);
-		}
+		prepareQuery();
 	}
 
 	/**
@@ -58,17 +61,45 @@ public abstract class AbstractMethodObject<T> {
 	public abstract T parse(final XMLStreamReader xmlReader)
 			throws XMLStreamException;
 
+	protected List<Type> callThreaded(final List<String> strings) {
+		// final List<Type> types = Collections
+		// .synchronizedList(new ArrayList<Type>());
+		final List<Type> types = new ArrayList<Type>();
+		final List<Future<Type>> futures = new ArrayList<Future<Type>>();
+		for (final String string : strings) {
+			futures.add(executor.submit(new Callable<Type>() {
+				@Override
+				public Type call() throws Exception {
+					return searchEngine.findType(string);
+				}
+			}));
+		}
+		for (final Future<Type> future : futures) {
+			try {
+				types.add(future.get());
+			} catch (InterruptedException | ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return types;
+	}
+
 	/**
 	 * Initialize the prepared Query.
 	 * 
 	 * @throws XQException
 	 */
-	private void prepareQuery() throws XQException {
+	private void prepareQuery() {
 		if (getQuery() == null) {
 			throw new RuntimeException("You have to redefine the query field !");
 		}
-		preparedQuery = connection.prepareExpression(getQuery());
-		preparedQuery.bindString(new QName("file"), filePath, null);
+
+		try {
+			preparedQuery = connection.prepareExpression(getQuery());
+			preparedQuery.bindString(new QName("file"), filePath, null);
+		} catch (final XQException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	protected abstract String getQuery();

@@ -23,13 +23,12 @@ public class FindNewOfObject extends AbstractMethodObject<List<Location>> {
 
 	@Getter
 	private final String query = declareVariables
-			+ "	<locations>"
-			+ " {"
-			+ "		for $u in /unit//unit[.//expr[call/name/text() = $typeName][text() = 'new']]"
-			+ "		return "
-			+ "			<path>{data($u/@filename)}</path>"
-			+ "	}"
-			+ "	</locations>;"
+			+ " let $result :="
+			+ "		for $unit in doc($file)/unit//unit[.//expr[call/name/text() = $typeName][text() = 'new']]"
+			+ "		return"
+			+ "			<path>{data($unit/@filename)}</path>"
+			+ "	return"
+			+ "		<locations>{$result}</locations>"
 			+ "(: Commentaire inutile permettant de garder le formatage du code mm avec ma save action :)";
 
 	/**

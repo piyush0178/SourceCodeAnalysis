@@ -50,20 +50,23 @@ public class FindSubTypesOfObject extends AbstractMethodObject<List<Type>> {
 	@Override
 	public List<Type> parse(final XMLStreamReader xmlReader)
 			throws XMLStreamException {
-		final List<Type> subTypeList = new ArrayList<Type>();
+		final List<String> subTypeList = new ArrayList<String>();
+		// final List<Type> subTypeList = new ArrayList<Type>();
 		while (xmlReader.hasNext()) {
 			xmlReader.next();
 			final int eventType = xmlReader.getEventType();
 			if (eventType == XMLStreamReader.END_ELEMENT
 					&& Constantes.EXTENDS.equals(xmlReader.getLocalName())) {
-				return subTypeList;
+				// return subTypeList;
+				return callThreaded(subTypeList);
 			} else if (eventType == XMLStreamReader.START_ELEMENT
 					&& Constantes.CLASS.equals(xmlReader.getLocalName())) {
-				subTypeList.add(searchEngine.findType(xmlReader
-						.getElementText()));
+				subTypeList.add(xmlReader.getElementText());
+				// subTypeList.add(searchEngine.findType(xmlReader
+				// .getElementText()));
 			}
 		}
+
 		throw new RuntimeException("This case will never append");
 	}
-
 }
