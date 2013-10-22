@@ -17,7 +17,7 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		final CodeSearchEngine engine = new CodeSearchEngineDatabaseImpl(
-				DatabaseConnection.getConnection(), Constantes.LUCENE_XML);
+				DatabaseConnection.getConnection(), Constantes.JAVA_XML);
 
 		long start, end;
 
@@ -38,6 +38,7 @@ public class Main {
 		// System.out.println("method " + i++ + " : " + type);
 		// }
 
+		System.out.println(type);
 		System.out.println("findMethodsTakingAsParameter :" + (end - start)
 				+ " msec");
 		System.out.println("Nbr de query effectué : "
