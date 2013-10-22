@@ -19,6 +19,7 @@ public class Constantes {
 	public static final String TYPE = "type";
 	public static final String ERROR = "error";
 	public static final String NAME = "name";
+	public static final String FILENAME = "filename";
 	public static final String FIELD = "field";
 	public static final String PACKAGE = "package";
 	public static final String LOCATION = "location";

@@ -1,5 +1,11 @@
 package fr.lille1.iagl.idl.main;
 
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
@@ -14,34 +20,33 @@ public class Main {
 
 	/**
 	 * @param args
+	 * @throws IOException
+	 * @throws SAXException
+	 * @throws ParserConfigurationException
 	 */
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws SAXException,
+			IOException, ParserConfigurationException {
 		final CodeSearchEngine engine = new CodeSearchEngineDatabaseImpl(
-				DatabaseConnection.getConnection(), Constantes.LUCENE_XML);
+				DatabaseConnection.getConnection(), Constantes.JAVA_XML);
 
-		long start, end;
+		long start, end, start1, end1;
 
 		start = System.currentTimeMillis();
-
-		// final Type type = engine.findType("File");
-		// final List<Type> types = engine.findSubTypesOf("RuntimeException");
-		final Type type = engine.findType("File");
-		// final List<Method> methods = engine
-		// .findMethodsTakingAsParameter("ObjectInputStream");
-		// final Type type = engine.findType("void");
-		// final Type type = engine.findType("ObjectInputStream");
+		final Type methods = engine.findType("Exception");
 		end = System.currentTimeMillis();
 
-		// System.out.println("type : " + type);
-		// int i = 0;
-		// for (final Type type : types) {
-		// System.out.println("method " + i++ + " : " + type);
-		// }
+		start1 = System.currentTimeMillis();
+		final Type methodes = engine.findType("String");
+		end1 = System.currentTimeMillis();
 
-		System.out.println("findMethodsTakingAsParameter :" + (end - start)
-				+ " msec");
+		final int i = 0;
+		// for (final Method m : methods) {
+		// System.out.println((++i) + " " + m);
+		// }
 		System.out.println("Nbr de query effectué : "
 				+ CodeSearchEngineDatabaseImpl.cpt);
+		System.out.println("methode :" + (end - start) + " msec");
+		System.out.println("methode :" + (end1 - start1) + " msec");
 		DatabaseConnection.closeConnection();
 
 	}

@@ -24,7 +24,7 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 	@Getter
 	private final String query = declareVariables
 			+ "	let $result :="
-			+ " 	for $unit in doc($file)/unit//unit[class/name = $typeName]"
+			+ " 	for $unit in $doc/unit/unit[class/name = $typeName]"
 			+ " 	return"
 			+ "		<type>"
 			+ "			<location>"

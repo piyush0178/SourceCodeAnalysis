@@ -24,3 +24,10 @@ List<Method> methods = engine
 		
 champ1 = String champ2 = String => 226sec et 2sec
 champ1 = outputStream champ2 String => 
+
+
+
+
+http://blogs.datadirect.com/2007/09/xqj-part-viii-binding-external.html
+
+http://blogs.datadirect.com/2007/08/xqj-part-iii-executing-queries.html

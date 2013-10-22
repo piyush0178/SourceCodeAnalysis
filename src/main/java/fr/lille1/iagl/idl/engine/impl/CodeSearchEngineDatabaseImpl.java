@@ -113,6 +113,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 			cpt++;
 
 			Type typeResult = findTypeObject.parse(xmlReader);
+
 			if (typeResult == null) {
 				typeResult = new UnknowType(typeName);
 			}

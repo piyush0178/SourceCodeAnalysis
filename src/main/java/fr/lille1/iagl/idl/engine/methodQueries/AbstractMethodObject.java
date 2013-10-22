@@ -1,9 +1,12 @@
 package fr.lille1.iagl.idl.engine.methodQueries;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.xquery.XQConnection;
@@ -11,6 +14,7 @@ import javax.xml.xquery.XQException;
 import javax.xml.xquery.XQPreparedExpression;
 
 import lombok.Getter;
+import fr.lille1.iagl.idl.bean.Location;
 import fr.lille1.iagl.idl.bean.Method;
 import fr.lille1.iagl.idl.bean.Type;
 import fr.lille1.iagl.idl.constantes.Constantes;
@@ -21,8 +25,9 @@ import fr.lille1.iagl.idl.engine.CodeSearchEngine;
  */
 public abstract class AbstractMethodObject<T> {
 
-	public final static String declareVariables = "declare variable $file as xs:string external;"
-			+ " declare variable $typeName as xs:string external;";
+	public final static String declareVariables = // "declare variable $file as xs:string external;"
+	" declare variable $doc as document-node(element(*,xs:untyped));"
+			+ "declare variable $typeName as xs:string external;";
 
 	protected XQConnection connection;
 	protected String filePath;
@@ -30,6 +35,8 @@ public abstract class AbstractMethodObject<T> {
 
 	@Getter
 	protected XQPreparedExpression preparedQuery;
+
+	private XMLStreamReader reader;
 
 	/**
 	 * Constructor
@@ -43,9 +50,16 @@ public abstract class AbstractMethodObject<T> {
 		this.connection = connection;
 		this.filePath = filePath;
 		this.searchEngine = searchEngine;
+
 		try {
+			// //////////////////
+			final XMLInputFactory factory = XMLInputFactory.newInstance();
+			final FileInputStream doc = new FileInputStream(filePath);
+			reader = factory.createXMLStreamReader(doc);
+
+			// //////////////////
 			prepareQuery();
-		} catch (final XQException e) {
+		} catch (final XQException | XMLStreamException | FileNotFoundException e) {
 			throw new RuntimeException("ERREUR : " + e.getMessage(), e);
 		}
 	}
@@ -68,7 +82,8 @@ public abstract class AbstractMethodObject<T> {
 			throw new RuntimeException("You have to redefine the query field !");
 		}
 		preparedQuery = connection.prepareExpression(getQuery());
-		preparedQuery.bindString(new QName("file"), filePath, null);
+		preparedQuery.bindDocument(new QName("doc"), reader, null);
+
 	}
 
 	protected abstract String getQuery();
@@ -83,12 +98,16 @@ public abstract class AbstractMethodObject<T> {
 	protected List<Method> parseMethods(final XMLStreamReader xmlReader)
 			throws XMLStreamException {
 		final List<Method> methodList = new ArrayList<Method>();
+		Type classe = null;
 		Method method = null;
 		while (xmlReader.hasNext()) {
 			xmlReader.next();
 			final int eventType = xmlReader.getEventType();
 			if (eventType == XMLStreamReader.END_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
+				case Constantes.CLASS:
+					method.setDeclaringType(classe);
+					break;
 				case Constantes.FUNCTION:
 					methodList.add(method);
 					break;
@@ -101,11 +120,23 @@ public abstract class AbstractMethodObject<T> {
 					method = new Method();
 					break;
 				case Constantes.CLASS:
-					method.setType(searchEngine.findType(xmlReader
+					classe = new Type();
+					// method.setDeclaringType(searchEngine.findType(xmlReader
+					// .getElementText()));
+					break;
+				case Constantes.CLASS_NAME:
+					classe.setName(xmlReader.getElementText());
+					break;
+				case Constantes.FILENAME:
+					classe.setDeclaration(new Location(xmlReader
 							.getElementText()));
 					break;
+				case Constantes.PACKAGE:
+					classe.setFullyQualifiedPackageName(xmlReader
+							.getElementText());
+					break;
 				case Constantes.TYPE_NAME:
-					method.setDeclaringType(searchEngine.findType(xmlReader
+					method.setType(searchEngine.findType(xmlReader
 							.getElementText()));
 					break;
 				case Constantes.METHOD_NAME:
