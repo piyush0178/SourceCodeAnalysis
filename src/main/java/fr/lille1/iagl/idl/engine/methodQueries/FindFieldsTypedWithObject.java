@@ -21,20 +21,48 @@ public class FindFieldsTypedWithObject extends
 	private String typeName;
 
 	@Getter
-	private final String query = declareVariables
+	private final String query2 = findTypeMethod
 			+ " let $fields := "
-			+ " 	for $class in doc($file)//class[.//block/decl_stmt/decl/type/name = $typeName]"
-			+ " 	 return "
-			+ " 		<class>"
-			+ "  			 <class_name>{ $class/name/text() }</class_name>"
-			+ " 				{"
+			+ "		<field_type>{ local:findType( doc($file), $typeName ) }</field_type>"
+			+ "		{"
+			+ " 		for $class in doc($file)//class[.//block/decl_stmt/decl/type/name = $typeName]"
+			+ " 		 return "
+			+ " 			<class>"
+			+ "  			{"
+			+ "					("
+			+ "					 	local:findType(doc($file), $class/name/text()),"
 			+ " 					for $field in $class//block/decl_stmt/decl[type/name=$typeName]"
 			+ " 					return"
-			+ " 						<name>{ $field/name/text() }</name>"
-			+ " 				}"
-			+ "			 </class>"
+			+ " 						<field_name>{ $field/name/text() }</field_name>"
+			+ " 				)"
+			+ "				}"
+			+ "				</class>"
+			+ "		}"
 			+ " return "
 			+ " <field_list>{$fields}</field_list>"
+			+ "(: Commentaire inutile permettant de garder le formatage du code mm avec ma save action :)";
+
+	@Getter
+	private final String query = findTypeMethod
+			+ " let $fields :="
+			+ " 	for $class in doc($file)//class[.//block/decl_stmt/decl/type/name = $typeName]"
+			+ "		return "
+			+ "			<class>"
+			+ " 		{"
+			+ "				if (count($class/name/text()) eq 0) then <type></type>"
+			+ "				else local:findType(doc($file), $class/name/text())"
+			+ "			}"
+			+ "			{"
+			+ "				for $field in $class//block/decl_stmt/decl[type/name= $typeName]"
+			+ "				return"
+			+ " 				<field_name>{ $field/name/text() }</field_name>"
+			+ " 		}"
+			+ "			</class>"
+			+ "		return"
+			+ "			<field_list> "
+			+ "				<field_type>{ local:findType( doc($file), $typeName) }</field_type>"
+			+ "				{$fields}"
+			+ "			</field_list>"
 			+ "(: Commentaire inutile permettant de garder le formatage du code mm avec ma save action :)";
 
 	/**
@@ -54,33 +82,34 @@ public class FindFieldsTypedWithObject extends
 	public List<Field> parse(final XMLStreamReader xmlReader)
 			throws XMLStreamException {
 		final List<Field> fields = new ArrayList<Field>();
-		Field field = null;
-		final Type type = searchEngine.findType(typeName);
+		Type fieldType = null;
 		Type declaringType = null;
 		while (xmlReader.hasNext()) {
 			xmlReader.next();
 			final int eventType = xmlReader.getEventType();
-			if (eventType == XMLStreamReader.END_ELEMENT) {
-				switch (xmlReader.getLocalName()) {
-				case Constantes.FIELD_LIST:
-					return fields;
-				}
-			} else if (eventType == XMLStreamReader.START_ELEMENT) {
+			if (eventType == XMLStreamReader.START_ELEMENT) {
 				final String localName = xmlReader.getLocalName();
 				switch (localName) {
-				case Constantes.CLASS_NAME:
-					declaringType = searchEngine.findType(xmlReader
-							.getElementText());
+				case "field_type":
+					fieldType = parseFindType(xmlReader);
 					break;
-				case Constantes.NAME:
-					field = new Field();
-					field.setDeclaringType(type);
-					field.setType(declaringType);
+				case Constantes.CLASS:
+					declaringType = parseFindType(xmlReader);
+					break;
+				case "field_name":
+					final Field field = new Field();
+					field.setDeclaringType(declaringType);
+					field.setType(fieldType);
 					field.setName(xmlReader.getElementText());
 					fields.add(field);
 					break;
 				}
 
+			} else if (eventType == XMLStreamReader.END_ELEMENT) {
+				switch (xmlReader.getLocalName()) {
+				case Constantes.FIELD_LIST:
+					return fields;
+				}
 			}
 		}
 		return null;

@@ -141,6 +141,7 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 				findSubTypesOfObject = new FindSubTypesOfObject(connection,
 						filePath, this);
 			}
+			findSubTypesOfObject.setTypeName(typeName);
 
 			final XQPreparedExpression preparedQuery = findSubTypesOfObject
 					.getPreparedQuery();
@@ -205,10 +206,6 @@ public class CodeSearchEngineDatabaseImpl implements CodeSearchEngine {
 
 			preparedQuery.bindString(new QName(Constantes.TYPE_NAME_XQUERY),
 					typeName, null);
-
-			// TODO RAL : Supprimer
-			System.out.println(preparedQuery.executeQuery()
-					.getSequenceAsString(null));
 
 			return findMethodsOfObject.parse(preparedQuery.executeQuery()
 					.getSequenceAsStream());

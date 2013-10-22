@@ -6,10 +6,7 @@ import javax.xml.xquery.XQConnection;
 
 import lombok.Getter;
 import lombok.Setter;
-import fr.lille1.iagl.idl.bean.Location;
 import fr.lille1.iagl.idl.bean.Type;
-import fr.lille1.iagl.idl.bean.TypeKind;
-import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 
 /**
@@ -22,30 +19,8 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 	private String typeName;
 
 	@Getter
-	private final String query = declareVariables
-			+ "	let $result :="
-			+ " 	for $unit in doc($file)/unit//unit[class/name = $typeName]"
-			+ " 	return"
-			+ "		<type>"
-			+ "			<location>"
-			+ "				<path>{data($unit/@filename)}</path>"
-			+ "				<line_number></line_number>"
-			+ "			</location>"
-			+ "			<package>"
-			+ "			{"
-			+ "				(: petite bidouille pr enlever 'package' et ';' de la déclaration du package :)"
-			+ "				substring-before(substring-after(data($unit/package),'package'), ';')"
-			+ "			}"
-			+ "			</package>"
-			+ "			<kind>"
-			+ "			{ "
-			+ "				if($unit/class) then 'class' "
-			+ "				else if($unit/enum) then 'enum'"
-			+ "				else if($unit/interface) then 'interface'"
-			+ "				else ''"
-			+ "			}"
-			+ "			</kind>"
-			+ "		</type>"
+	private final String query = findTypeMethod
+			+ "	let $result := local:findType(doc($file), $typeName)"
 			+ "	return"
 			+ "		if(count($result) eq 0) then <error>The query returned nothing</error>"
 			+ "		else $result";
@@ -58,68 +33,7 @@ public class FindTypeObject extends AbstractMethodObject<Type> {
 	@Override
 	public Type parse(final XMLStreamReader xmlReader)
 			throws XMLStreamException {
-		Type typeRes = null;
-		while (xmlReader.hasNext()) {
-			xmlReader.next();
-			final int eventType = xmlReader.getEventType();
-			if (eventType == XMLStreamReader.END_ELEMENT
-					&& Constantes.TYPE.equals(xmlReader.getLocalName())) {
-				return typeRes;
-			} else if (eventType == XMLStreamReader.START_ELEMENT) {
-				switch (xmlReader.getLocalName()) {
-				case Constantes.ERROR:
-					// la base de donnée n'a rien répondu
-					return null;
-				case Constantes.TYPE:
-					typeRes = new Type();
-					typeRes.setName(typeName);
-					break;
-				case Constantes.LOCATION:
-					typeRes.setDeclaration(parseLocation(xmlReader));
-					break;
-				case Constantes.PACKAGE:
-					typeRes.setFullyQualifiedPackageName(xmlReader
-							.getElementText());
-					break;
-				case Constantes.KIND:
-					typeRes.setKind(TypeKind.valueOf(xmlReader.getElementText()
-							.toUpperCase()));
-					break;
-				}
-			}
-		}
-		throw new RuntimeException("This case will never append");
-	}
-
-	/**
-	 * TODO JIV : documentation
-	 * 
-	 * @param xmlReader
-	 * @return
-	 * @throws XMLStreamException
-	 */
-	private Location parseLocation(final XMLStreamReader xmlReader)
-			throws XMLStreamException {
-		final Location location = new Location();
-		while (xmlReader.hasNext()) {
-			xmlReader.next();
-			final int eventType = xmlReader.getEventType();
-			if (eventType == XMLStreamReader.END_ELEMENT
-					&& Constantes.LOCATION.equals(xmlReader.getLocalName())) {
-				return location;
-			} else if (eventType == XMLStreamReader.START_ELEMENT) {
-				switch (xmlReader.getLocalName()) {
-				case Constantes.PATH:
-					location.setFilePath(xmlReader.getElementText());
-					break;
-				case Constantes.LINE_NUMBER:
-					// FIXME : pas encore géré ! (comme dans la requête
-					// d'ailleurs)
-					break;
-				}
-			}
-		}
-		throw new RuntimeException("This case will never append");
+		return parseFindType(xmlReader);
 	}
 
 }

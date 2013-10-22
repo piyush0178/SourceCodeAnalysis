@@ -35,5 +35,6 @@ public class Constantes {
 	public static final String RETURN = "return";
 	public static final String PARAMETER = "parameter";
 	public static final String LOCATIONS = "locations";
+	public static final String PARAM = "param";
 
 }

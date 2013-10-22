@@ -1,26 +1,223 @@
+
+log4j:WARN No appenders could be found for logger
+(org.apache.jcs.engine.control.CompositeCacheManager).
+log4j:WARN Please
+initialize the log4j system properly.
 <function_list>
 	<function>
-		<class>Applet</class>
+		<class>
+			<type>
+				<name>Applet</name>
+				<location>
+					<path>java/applet/Applet.java</path>
+					<line_number />
+				</location>
+				<package>java.applet</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>FilePermission</class>
+		<class>
+			<type>
+				<name>FilePermission</name>
+				<location>
+					<path>java/io/FilePermission.java</path>
+					<line_number />
+				</location>
+				<package>java.io</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>FilePermissionCollection</class>
+		<class>
+			<type>
+				<name>FilePermissionCollection</name>
+				<location>
+					<path>java/io/FilePermission.java</path>
+					<line_number />
+				</location>
+				<package>java.io</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
+		</parameter_list>
+	</function>
+	<function>
+		<class>
+			<type />
+		</class>
+		<type_name>void</type_name>
+		<method_name>readObject</method_name>
+		<parameter_list>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
+		</parameter_list>
+	</function>
+	<function>
+		<class>
+			<type>
+				<name>InetSocketAddress</name>
+				<location>
+					<path>java/net/InetSocketAddress.java</path>
+					<line_number />
+				</location>
+				<package>java.net</package>
+				<kind>class</kind>
+			</type>
+		</class>
+		<type_name>void</type_name>
+		<method_name>readObject</method_name>
+		<parameter_list>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
+		</parameter_list>
+	</function>
+	<function>
+		<class>
+			<type>
+				<name>SocketPermissionCollection</name>
+				<location>
+					<path>java/net/SocketPermission.java</path>
+					<line_number />
+				</location>
+				<package>java.net</package>
+				<kind>class</kind>
+			</type>
+		</class>
+		<type_name>void</type_name>
+		<method_name>readObject</method_name>
+		<parameter_list>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
+		</parameter_list>
+	</function>
+	<function>
+		<class>
+			<type>
+				<name>URI</name>
+				<location>
+					<path>java/net/URI.java</path>
+					<line_number />
+				</location>
+				<package>java.net</package>
+				<kind>class</kind>
+			</type>
+		</class>
+		<type_name>void</type_name>
+		<method_name>readObject</method_name>
+		<parameter_list>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
+		</parameter_list>
+	</function>
+	<function>
+		<class>
+			<type>
+				<name>ActivationGroupDesc</name>
+				<location>
+					<path>java/rmi/activation/ActivationGroupDesc.java</path>
+					<line_number />
+				</location>
+				<package>java.rmi.activation</package>
+				<kind>class</kind>
+			</type>
+		</class>
+		<type_name>void</type_name>
+		<method_name>readObject</method_name>
+		<parameter_list>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
@@ -28,183 +225,485 @@
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>InetSocketAddress</class>
+		<class>
+			<type>
+				<name>ActivationID</name>
+				<location>
+					<path>java/rmi/activation/ActivationID.java</path>
+					<line_number />
+				</location>
+				<package>java.rmi.activation</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>SocketPermissionCollection</class>
+		<class>
+			<type>
+				<name>BasicPermission</name>
+				<location>
+					<path>java/security/BasicPermission.java</path>
+					<line_number />
+				</location>
+				<package>java.security</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>URI</class>
+		<class>
+			<type>
+				<name>Permissions</name>
+				<location>
+					<path>java/security/Permissions.java</path>
+					<line_number />
+				</location>
+				<package>java.security</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>ActivationGroupDesc</class>
+		<class>
+			<type>
+				<name>PermissionsHash</name>
+				<location>
+					<path>java/security/Permissions.java</path>
+					<line_number />
+				</location>
+				<package>java.security</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>CommandEnvironment</class>
+		<class>
+			<type>
+				<name>Provider</name>
+				<location>
+					<path>java/security/Provider.java</path>
+					<line_number />
+				</location>
+				<package>java.security</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>ActivationID</class>
+		<class>
+			<type>
+				<name>UnresolvedPermissionCollection</name>
+				<location>
+					<path>java/security/UnresolvedPermissionCollection.java</path>
+					<line_number />
+				</location>
+				<package>java.security</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>BasicPermission</class>
+		<class>
+			<type>
+				<name>ChoiceFormat</name>
+				<location>
+					<path>java/text/ChoiceFormat.java</path>
+					<line_number />
+				</location>
+				<package>java.text</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>Permissions</class>
+		<class>
+			<type>
+				<name>DecimalFormat</name>
+				<location>
+					<path>java/text/DecimalFormat.java</path>
+					<line_number />
+				</location>
+				<package>java.text</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>PermissionsHash</class>
+		<class>
+			<type>
+				<name>DecimalFormatSymbols</name>
+				<location>
+					<path>java/text/DecimalFormatSymbols.java</path>
+					<line_number />
+				</location>
+				<package>java.text</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>Provider</class>
+		<class>
+			<type>
+				<name>MessageFormat</name>
+				<location>
+					<path>java/text/MessageFormat.java</path>
+					<line_number />
+				</location>
+				<package>java.text</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>UnresolvedPermissionCollection</class>
+		<class>
+			<type>
+				<name>NumberFormat</name>
+				<location>
+					<path>java/text/NumberFormat.java</path>
+					<line_number />
+				</location>
+				<package>java.text</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>ChoiceFormat</class>
+		<class>
+			<type>
+				<name>SimpleDateFormat</name>
+				<location>
+					<path>java/text/SimpleDateFormat.java</path>
+					<line_number />
+				</location>
+				<package>java.text</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>DecimalFormat</class>
+		<class>
+			<type />
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>DecimalFormatSymbols</class>
+		<class>
+			<type>
+				<name>BitSet</name>
+				<location>
+					<path>java/util/BitSet.java</path>
+					<line_number />
+				</location>
+				<package>java.util</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>MessageFormat</class>
+		<class>
+			<type>
+				<name>GregorianCalendar</name>
+				<location>
+					<path>java/util/GregorianCalendar.java</path>
+					<line_number />
+				</location>
+				<package>java.util</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>NumberFormat</class>
+		<class>
+			<type>
+				<name>PropertyPermissionCollection</name>
+				<location>
+					<path>java/util/PropertyPermission.java</path>
+					<line_number />
+				</location>
+				<package>java.util</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 	<function>
-		<class>SimpleDateFormat</class>
+		<class>
+			<type>
+				<name>SimpleTimeZone</name>
+				<location>
+					<path>java/util/SimpleTimeZone.java</path>
+					<line_number />
+				</location>
+				<package>java.util</package>
+				<kind>class</kind>
+			</type>
+		</class>
 		<type_name>void</type_name>
 		<method_name>readObject</method_name>
 		<parameter_list>
-			<type>ObjectInputStream</type>
-		</parameter_list>
-	</function>
-	<function>
-		<class />
-		<type_name>void</type_name>
-		<method_name>readObject</method_name>
-		<parameter_list>
-			<type>ObjectInputStream</type>
-		</parameter_list>
-	</function>
-	<function>
-		<class>BitSet</class>
-		<type_name>void</type_name>
-		<method_name>readObject</method_name>
-		<parameter_list>
-			<type>ObjectInputStream</type>
-		</parameter_list>
-	</function>
-	<function>
-		<class>GregorianCalendar</class>
-		<type_name>void</type_name>
-		<method_name>readObject</method_name>
-		<parameter_list>
-			<type>ObjectInputStream</type>
-		</parameter_list>
-	</function>
-	<function>
-		<class>PropertyPermissionCollection</class>
-		<type_name>void</type_name>
-		<method_name>readObject</method_name>
-		<parameter_list>
-			<type>ObjectInputStream</type>
-		</parameter_list>
-	</function>
-	<function>
-		<class>SimpleTimeZone</class>
-		<type_name>void</type_name>
-		<method_name>readObject</method_name>
-		<parameter_list>
-			<type>ObjectInputStream</type>
+			<param>
+				<type>
+					<name>ObjectInputStream</name>
+					<location>
+						<path>java/io/ObjectInputStream.java</path>
+						<line_number />
+					</location>
+					<package>java.io</package>
+					<kind>class</kind>
+				</type>
+			</param>
 		</parameter_list>
 	</function>
 </function_list>

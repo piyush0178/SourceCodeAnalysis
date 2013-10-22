@@ -11,8 +11,12 @@ import javax.xml.xquery.XQException;
 import javax.xml.xquery.XQPreparedExpression;
 
 import lombok.Getter;
+import fr.lille1.iagl.idl.bean.Location;
 import fr.lille1.iagl.idl.bean.Method;
+import fr.lille1.iagl.idl.bean.PrimitiveType;
 import fr.lille1.iagl.idl.bean.Type;
+import fr.lille1.iagl.idl.bean.TypeKind;
+import fr.lille1.iagl.idl.bean.UnknowType;
 import fr.lille1.iagl.idl.constantes.Constantes;
 import fr.lille1.iagl.idl.engine.CodeSearchEngine;
 
@@ -23,6 +27,40 @@ public abstract class AbstractMethodObject<T> {
 
 	public final static String declareVariables = "declare variable $file as xs:string external;"
 			+ " declare variable $typeName as xs:string external;";
+
+	public final static String findTypeMethod = declareVariables
+			+ " declare function local:findType($root, $name as xs:string)"
+			+ " {"
+			+ " 	if ($name = 'void' or $name = 'char' or $name = 'boolean' "
+			+ "			or $name = 'byte' or $name = 'double' or $name = 'float'"
+			+ "			or $name = 'int' or $name = 'long' or $name = 'short')"
+			+ "		then <primitive>{$name}</primitive>"
+			+ "		else"
+			+ "		for $unit in $root/unit//unit[class/name = $name]"
+			+ " 	return"
+			+ "		<type>"
+			+ "			<name>{$name}</name>"
+			+ "			<location>"
+			+ "				<path>{data($unit/@filename)}</path>"
+			+ "				<line_number></line_number>"
+			+ "			</location>"
+			+ "			<package>"
+			+ "			{"
+			+ "				(: petite bidouille pr enlever 'package' et ';' de la déclaration du package :)"
+			+ "				substring-before(substring-after(data($unit/package),'package'), ';')"
+			+ "			}"
+			+ "			</package>"
+			+ "			<kind>"
+			+ "			{ "
+			+ "				if($unit/class) then 'class' "
+			+ "				else if($unit/enum) then 'enum'"
+			+ "				else if($unit/interface) then 'interface'"
+			+ "				else ''"
+			+ "			}"
+			+ "			</kind>"
+			+ "		</type>"
+			+ "	}; "
+			+ "(: Commentaire inutile permettant de garder le formatage du code mm avec ma save action :)";
 
 	protected XQConnection connection;
 	protected String filePath;
@@ -59,6 +97,13 @@ public abstract class AbstractMethodObject<T> {
 			throws XMLStreamException;
 
 	/**
+	 * TODO : doc
+	 * 
+	 * @return
+	 */
+	protected abstract String getQuery();
+
+	/**
 	 * Initialize the prepared Query.
 	 * 
 	 * @throws XQException
@@ -70,8 +115,6 @@ public abstract class AbstractMethodObject<T> {
 		preparedQuery = connection.prepareExpression(getQuery());
 		preparedQuery.bindString(new QName("file"), filePath, null);
 	}
-
-	protected abstract String getQuery();
 
 	/**
 	 * TODO RAL : commentaire
@@ -89,6 +132,8 @@ public abstract class AbstractMethodObject<T> {
 			final int eventType = xmlReader.getEventType();
 			if (eventType == XMLStreamReader.END_ELEMENT) {
 				switch (xmlReader.getLocalName()) {
+				case Constantes.TYPE_NAME:
+					break;
 				case Constantes.FUNCTION:
 					methodList.add(method);
 					break;
@@ -101,12 +146,10 @@ public abstract class AbstractMethodObject<T> {
 					method = new Method();
 					break;
 				case Constantes.CLASS:
-					method.setType(searchEngine.findType(xmlReader
-							.getElementText()));
+					method.setType(parseFindType(xmlReader));
 					break;
 				case Constantes.TYPE_NAME:
-					method.setDeclaringType(searchEngine.findType(xmlReader
-							.getElementText()));
+					method.setDeclaringType(parseFindType(xmlReader));
 					break;
 				case Constantes.METHOD_NAME:
 					method.setName(xmlReader.getElementText());
@@ -137,9 +180,85 @@ public abstract class AbstractMethodObject<T> {
 							.getLocalName())) {
 				return paramList;
 			} else if (eventType == XMLStreamReader.START_ELEMENT
+					&& Constantes.PARAM.equals(xmlReader.getLocalName())) {
+				paramList.add(parseFindType(xmlReader));
+			}
+		}
+		throw new RuntimeException("This case will never append");
+	}
+
+	/**
+	 * Parse un type
+	 * 
+	 * @param xmlReader
+	 * @return
+	 * @throws XMLStreamException
+	 */
+	protected Type parseFindType(final XMLStreamReader xmlReader)
+			throws XMLStreamException {
+		Type typeRes = null;
+		while (xmlReader.hasNext()) {
+			xmlReader.next();
+			final int eventType = xmlReader.getEventType();
+			if (eventType == XMLStreamReader.END_ELEMENT
 					&& Constantes.TYPE.equals(xmlReader.getLocalName())) {
-				paramList
-						.add(searchEngine.findType(xmlReader.getElementText()));
+				return typeRes;
+			} else if (eventType == XMLStreamReader.START_ELEMENT) {
+				switch (xmlReader.getLocalName()) {
+				case "primitive":
+					return new PrimitiveType(xmlReader.getElementText());
+				case Constantes.ERROR:
+					// la base de donnée n'a rien répondu
+					return new UnknowType(xmlReader.getElementText());
+				case Constantes.TYPE:
+					typeRes = new Type();
+					break;
+				case Constantes.NAME:
+					typeRes.setName(xmlReader.getElementText());
+					break;
+				case Constantes.LOCATION:
+					typeRes.setDeclaration(parseLocation(xmlReader));
+					break;
+				case Constantes.PACKAGE:
+					typeRes.setFullyQualifiedPackageName(xmlReader
+							.getElementText());
+					break;
+				case Constantes.KIND:
+					typeRes.setKind(TypeKind.valueOf(xmlReader.getElementText()
+							.toUpperCase()));
+					break;
+				}
+			}
+		}
+		throw new RuntimeException("This case will never append");
+	}
+
+	/**
+	 * TODO JIV : documentation
+	 * 
+	 * @param xmlReader
+	 * @return
+	 * @throws XMLStreamException
+	 */
+	private Location parseLocation(final XMLStreamReader xmlReader)
+			throws XMLStreamException {
+		final Location location = new Location();
+		while (xmlReader.hasNext()) {
+			xmlReader.next();
+			final int eventType = xmlReader.getEventType();
+			if (eventType == XMLStreamReader.END_ELEMENT
+					&& Constantes.LOCATION.equals(xmlReader.getLocalName())) {
+				return location;
+			} else if (eventType == XMLStreamReader.START_ELEMENT) {
+				switch (xmlReader.getLocalName()) {
+				case Constantes.PATH:
+					location.setFilePath(xmlReader.getElementText());
+					break;
+				case Constantes.LINE_NUMBER:
+					// FIXME : pas encore géré ! (comme dans la requête
+					// d'ailleurs)
+					break;
+				}
 			}
 		}
 		throw new RuntimeException("This case will never append");
